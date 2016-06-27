@@ -1,0 +1,26 @@
+/**
+ * Copyright (c) 2016, Lee Byron
+ * All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+declare export var $$ITERATOR: $SymbolIterator | string
+
+declare export function isIterable(obj: mixed): boolean
+
+declare export function isCollection(obj: mixed): boolean
+
+declare export function getIterator(iterable: Iterable<TValue>): Iterator<TValue>
+declare export function getIterator(iterable: mixed): void | Iterator<mixed>
+
+declare export function getIteratorMethod(iterable: Iterable<TValue>): () => Iterator<TValue>
+declare export function getIteratorMethod(iterable: mixed): void | () => Iterator<mixed>
+
+declare export function forEach<TCollection: Iterable<TValue>>(collection: TCollection, callbackFn: (value: TValue, index: number, collection: TCollection) => any, thisArg?: mixed): void
+declare export function forEach<TCollection: { length: number }>(collection: TCollection, callbackFn: (value: mixed, index: number, collection: TCollection) => any, thisArg?: mixed): void
+
+declare export function createIterator(collection: Iterable<TValue>): Iterator<TValue>
+declare export function createIterator(collection: { length: number }): Iterator<mixed>
+declare export function createIterator(collection: mixed): void | Iterator<mixed>
