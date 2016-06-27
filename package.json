@@ -1,0 +1,44 @@
+{
+  "name": "iterall",
+  "version": "1.0.0",
+  "description": "Minimal zero-dependency utilities for using JavaScript Iterables in all environments.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint && npm run testonly && npm run testdocs",
+    "lint": "standard --verbose index.js test.js",
+    "testonly": "nyc --check-coverage --statements 100 node test.js",
+    "testdocs": "if [ \"$(documentation readme -dgs API | grep -vF 'up to date')\" ]; then echo 'Must run: npm run docs'; exit 1; fi;",
+    "docs": "documentation readme -gs API",
+    "travis": "npm run test && nyc report --reporter=text-lcov | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/leebyron/iterall.git"
+  },
+  "files": [
+    "index.js",
+    "index.js.flow",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "es6",
+    "iterator",
+    "iterable",
+    "polyfill",
+    "for-of"
+  ],
+  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/leebyron/iterall/issues"
+  },
+  "homepage": "https://github.com/leebyron/iterall#readme",
+  "devDependencies": {
+    "coveralls": "2.11.9",
+    "documentation": "4.0.0-beta5",
+    "nyc": "6.6.1",
+    "standard": "7.1.2"
+  }
+}
