@@ -92,6 +92,17 @@ Protocols like `Iterable` helps these new data-structures work with more
 libraries and built-in JavaScript behavior. There's no need to limit to ES2015
 environments and bleeding-edge browsers to implement `Iterable`.
 
+<!--
+
+NOTE TO CONTRIBUTORS
+
+The API section below is AUTOMATICALLY GENERATED via `npm run docs`. Any direct
+edits to this section will cause Travis CI to report a failure. The source of
+this documentation is index.js. Edit that file then run `npm run docs` to
+automatically update README.md
+
+-->
+
 ## API
 
 ### $$ITERATOR
@@ -306,7 +317,7 @@ well-tested. The value of new additional features will be weighed against their
 size. This library also seeks to leverage and mirror the
 [ECMAScript specification][] in its behavior as much as possible and reasonable.
 
-This repository has far more documentation and explaination than code, and it is
+This repository has far more documentation and explanation than code, and it is
 expected that the majority of contributions will come in the form of improving
 these.
 
