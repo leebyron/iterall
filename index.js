@@ -12,7 +12,7 @@
 var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
 
 /**
- * A property name to be used as the name of an Iterable's method reponsible
+ * A property name to be used as the name of an Iterable's method responsible
  * for producing an Iterator. Typically represents the value `Symbol.iterator`.
  *
  * `Symbol` is defined in ES2015 environments, however some transitioning
