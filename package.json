@@ -1,6 +1,6 @@
 {
   "name": "iterall",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Minimal zero-dependency utilities for using JavaScript Iterables in all environments.",
   "main": "index.js",
   "scripts": {
