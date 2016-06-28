@@ -30,20 +30,26 @@ var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  *
  * var $$ITERATOR = require('iterall').$$ITERATOR
  *
- * function Counter(to) {
+ * function Counter (to) {
  *   this.to = to
- *   this.num = 0
  * }
  *
  * Counter.prototype[$$ITERATOR] = function () {
  *   return {
- *     next() {
+ *     to: this.to,
+ *     num: 0,
+ *     next () {
  *       if (this.num >= this.to) {
  *         return { value: undefined, done: true }
  *       }
- *       return { value: this.num++ }
+ *       return { value: this.num++, done: false }
  *     }
  *   }
+ * }
+ *
+ * var counter = new Counter(3)
+ * for (var number of counter) {
+ *   console.log(number) // 0 ... 1 ... 2
  * }
  *
  * @type {Symbol|string}

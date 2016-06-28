@@ -37,6 +37,34 @@ test('$$ITERATOR is Symbol.iterator when available', () =>
   Symbol.iterator && $$ITERATOR === Symbol.iterator
 )
 
+test('$$ITERATOR can be used to create new iterables', () => {
+  function Counter (to) {
+    this.to = to
+  }
+
+  Counter.prototype[$$ITERATOR] = function () {
+    return {
+      to: this.to,
+      num: 0,
+      next () {
+        if (this.num >= this.to) {
+          return { value: undefined, done: true }
+        }
+        return { value: this.num++, done: false }
+      }
+    }
+  }
+
+  var counter = new Counter(3)
+  var iterator = counter[$$ITERATOR]()
+
+  assert.deepEqual(iterator.next(), { value: 0, done: false })
+  assert.deepEqual(iterator.next(), { value: 1, done: false })
+  assert.deepEqual(iterator.next(), { value: 2, done: false })
+  assert.deepEqual(iterator.next(), { value: undefined, done: true })
+  assert.deepEqual(iterator.next(), { value: undefined, done: true })
+})
+
 // isIterable
 
 var isIterable = require('./').isIterable
