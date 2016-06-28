@@ -12,6 +12,8 @@ declare module "iterall" {
 
   export function isIterable(obj: any): boolean
 
+  export function isArrayLike(obj: any): boolean
+
   export function isCollection(obj: any): boolean
 
   export function getIterator(iterable: Iterable<TValue>): Iterator<TValue>

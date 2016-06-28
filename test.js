@@ -180,6 +180,72 @@ test('isIterable false for incorrect Iterable', () => {
   isIterable(badIterable()) === false
 })
 
+// isArrayLike
+
+var isArrayLike = require('./').isArrayLike
+
+test('isArrayLike true for Array', () =>
+  isArrayLike([]) === true
+)
+
+test('isArrayLike true for TypedArray', () =>
+  isArrayLike(new Int8Array()) === true
+)
+
+test('isArrayLike true for String', () =>
+  isArrayLike('A') === true &&
+  isArrayLike('0') === true &&
+  isArrayLike('') === true &&
+  isArrayLike(new String('ABC')) === true // eslint-disable-line no-new-wrappers
+)
+
+test('isArrayLike false for Number', () =>
+  isArrayLike(1) === false &&
+  isArrayLike(0) === false &&
+  isArrayLike(new Number(123)) === false && // eslint-disable-line no-new-wrappers
+  isArrayLike(NaN) === false
+)
+
+test('isArrayLike false for Boolean', () =>
+  isArrayLike(true) === false &&
+  isArrayLike(false) === false &&
+  isArrayLike(new Boolean(true)) === false // eslint-disable-line no-new-wrappers
+)
+
+test('isArrayLike false for null', () =>
+  isArrayLike(null) === false
+)
+
+test('isArrayLike false for undefined', () =>
+  isArrayLike(undefined) === false
+)
+
+test('isArrayLike false for non-iterable Object', () =>
+  isArrayLike({}) === false &&
+  isArrayLike({ iterable: true }) === false
+)
+
+test('isArrayLike true for arguments Object', () =>
+  isArrayLike(argumentsObject()) === true
+)
+
+test('isArrayLike true for non-iterable Array-like Object', () =>
+  isArrayLike(arrayLike()) === true
+)
+
+test('isArrayLike false for weird length Object', () =>
+  isArrayLike({ length: -1 }) === false &&
+  isArrayLike({ length: 0.25 }) === false
+)
+
+test('isArrayLike false for iterable Object', () => {
+  isArrayLike(iterSampleFib()) === false
+})
+
+test('isArrayLike false for Generator', () => {
+  isArrayLike(genSampleFib()) === false
+})
+
 // isCollection
 
 var isCollection = require('./').isCollection

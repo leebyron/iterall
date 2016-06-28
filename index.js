@@ -66,7 +66,9 @@ exports.$$ITERATOR = $$ITERATOR
  * var isIterable = require('iterall').isIterable
  * isIterable([ 1, 2, 3 ]) // true
  * isIterable('ABC') // true
+ * isArrayLike({ length: 1, 0: 'Alpha' }) // false
  * isIterable({ key: 'value' }) // false
+ * isIterable(new Map()) // true
  *
  * @param obj
  *   A value which might implement the Iterable protocol.
@@ -78,18 +80,48 @@ function isIterable (obj) {
 exports.isIterable = isIterable
 
 /**
+ * Returns true if the provided object implements the Array-like protocol via
+ * defining a positive-integer `length` property.
+ *
+ * @example
+ *
+ * var isArrayLike = require('iterall').isArrayLike
+ * isArrayLike([ 1, 2, 3 ]) // true
+ * isArrayLike('ABC') // true
+ * isArrayLike({ length: 1, 0: 'Alpha' }) // true
+ * isArrayLike({ key: 'value' }) // false
+ * isArrayLike(new Map()) // false
+ *
+ * @param obj
+ *   A value which might implement the Array-like protocol.
+ * @return {boolean} true if Array-like.
+ */
+function isArrayLike (obj) {
+  var length = obj != null && obj.length
+  return typeof length === 'number' && length >= 0 && length % 1 === 0
+}
+exports.isArrayLike = isArrayLike
+
+/**
  * Returns true if the provided object is an Object (i.e. not a string literal)
- * and is either Iterable or "Array-like" due to having a numeric
- * `length` property.
+ * and is either Iterable or Array-like.
  *
  * This may be used in place of [Array.isArray()][isArray] to determine if an
- * object can be iterated-over. It always excludes string literals and includes
- * Arrays (regardless of if it is Iterable). It also includes other Array-like
- * objects such as NodeList, TypedArray, and Buffer.
+ * object should be iterated-over. It always excludes string literals and
+ * includes Arrays (regardless of if it is Iterable). It also includes other
+ * Array-like objects such as NodeList, TypedArray, and Buffer.
  *
  * @example
  *
  * var isCollection = require('iterall').isCollection
+ * isCollection([ 1, 2, 3 ]) // true
+ * isCollection('ABC') // false
+ * isCollection({ length: 1, 0: 'Alpha' }) // true
+ * isArrayLike({ key: 'value' }) // false
+ * isArrayLike(new Map()) // true
+ *
+ * @example
+ *
  * var forEach = require('iterall').forEach
  * if (isCollection(obj)) {
  *   forEach(obj, function (value) {
@@ -102,7 +134,7 @@ exports.isIterable = isIterable
  * @return {boolean} true if Iterable or Array-like Object.
  */
 function isCollection (obj) {
-  return Object(obj) === obj && (typeof obj.length === 'number' || isIterable(obj))
+  return Object(obj) === obj && (isArrayLike(obj) || isIterable(obj))
 }
 exports.isCollection = isCollection
 
@@ -165,7 +197,7 @@ exports.getIteratorMethod = getIteratorMethod
 
 /**
  * Given an object which either implements the Iterable protocol or is
- * "Array-like", iterate over it, calling the `callback` at each iteration.
+ * Array-like, iterate over it, calling the `callback` at each iteration.
  *
  * Use `forEach` where you would expect to use a `for ... of` loop in ES6.
  * However `forEach` adheres to the behavior of [Array#forEach][] described in
@@ -226,7 +258,7 @@ function forEach (collection, callback, thisArg) {
           throw new TypeError('Near-infinite iteration.')
         }
       }
-    } else if (typeof collection.length === 'number') {
+    } else if (isArrayLike(collection)) {
       for (; i < collection.length; i++) {
         if (collection.hasOwnProperty(i)) {
           callback.call(thisArg, collection[i], i, collection)
@@ -271,8 +303,8 @@ function createIterator (collection) {
     if (iterator) {
       return iterator
     }
-    if (typeof collection.length === 'number') {
-      return new ArraylikeIterator(collection)
+    if (isArrayLike(collection)) {
+      return new ArrayLikeIterator(collection)
     }
   }
 }
@@ -280,19 +312,19 @@ exports.createIterator = createIterator
 
 // When the object provided to `createIterator` is not Iterable but is
 // Array-like, this simple Iterator is created.
-function ArraylikeIterator (obj) {
+function ArrayLikeIterator (obj) {
   this._o = obj
   this._i = 0
 }
 
 // Note: all Iterators are themselves Iterable.
-ArraylikeIterator.prototype[$$ITERATOR] = function () {
+ArrayLikeIterator.prototype[$$ITERATOR] = function () {
   return this
 }
 
 // A simple state-machine determines the IteratorResult returned, yielding
 // each value in the Array-like object in order of their indicies.
-ArraylikeIterator.prototype.next = function () {
+ArrayLikeIterator.prototype.next = function () {
   if (this._o === void 0 || this._i >= this._o.length) {
     this._o = void 0
     return { value: void 0, done: true }

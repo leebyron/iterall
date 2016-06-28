@@ -12,6 +12,8 @@ declare export var $$ITERATOR: $SymbolIterator | string
 
 declare export function isIterable(obj: any): boolean
 
+declare export function isArrayLike(obj: any): boolean
+
 declare export function isCollection(obj: any): boolean
 
 declare export function getIterator<TValue>(iterable: Iterable<TValue>): Iterator<TValue>

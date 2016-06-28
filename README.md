@@ -1,6 +1,6 @@
 # JavaScript [Iterators][] for all!
 
-[![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![568 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-568%20B-blue.svg)
+[![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![568 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-604%20B-blue.svg)
 
 `iterall` provides a few crucial utilities for implementing and working with
 [Iterables][iterators] and [Array-likes][array-like] in all JavaScript
@@ -221,21 +221,44 @@ either implementing a `Symbol.iterator` or `"@@iterator"` method.
 var isIterable = require('iterall').isIterable
 isIterable([ 1, 2, 3 ]) // true
 isIterable('ABC') // true
+isArrayLike({ length: 1, 0: 'Alpha' }) // false
 isIterable({ key: 'value' }) // false
+isIterable(new Map()) // true
 ```
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if Iterable.
 
+### isArrayLike
+
+Returns true if the provided object implements the Array-like protocol via
+defining a positive-integer `length` property.
+
+**Parameters**
+
+-   `obj`  A value which might implement the Array-like protocol.
+
+**Examples**
+
+```javascript
+var isArrayLike = require('iterall').isArrayLike
+isArrayLike([ 1, 2, 3 ]) // true
+isArrayLike('ABC') // true
+isArrayLike({ length: 1, 0: 'Alpha' }) // true
+isArrayLike({ key: 'value' }) // false
+isArrayLike(new Map()) // false
+```
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if Array-like.
+
 ### isCollection
 
 Returns true if the provided object is an Object (i.e. not a string literal)
-and is either Iterable or "Array-like" due to having a numeric
-`length` property.
+and is either Iterable or Array-like.
 
 This may be used in place of [Array.isArray()][isarray] to determine if an
-object can be iterated-over. It always excludes string literals and includes
-Arrays (regardless of if it is Iterable). It also includes other Array-like
-objects such as NodeList, TypedArray, and Buffer.
+object should be iterated-over. It always excludes string literals and
+includes Arrays (regardless of if it is Iterable). It also includes other
+Array-like objects such as NodeList, TypedArray, and Buffer.
 
 **Parameters**
 
@@ -245,6 +268,14 @@ objects such as NodeList, TypedArray, and Buffer.
 
 ```javascript
 var isCollection = require('iterall').isCollection
+isCollection([ 1, 2, 3 ]) // true
+isCollection('ABC') // false
+isCollection({ length: 1, 0: 'Alpha' }) // true
+isArrayLike({ key: 'value' }) // false
+isArrayLike(new Map()) // true
+```
+
+```javascript
 var forEach = require('iterall').forEach
 if (isCollection(obj)) {
   forEach(obj, function (value) {
@@ -305,7 +336,7 @@ Returns **function (): Iterator&lt;T>** `@@iterator` method.
 ### forEach
 
 Given an object which either implements the Iterable protocol or is
-"Array-like", iterate over it, calling the `callback` at each iteration.
+Array-like, iterate over it, calling the `callback` at each iteration.
 
 Use `forEach` where you would expect to use a `for ... of` loop in ES6.
 However `forEach` adheres to the behavior of [Array#forEach][] described in
