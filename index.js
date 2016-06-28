@@ -233,7 +233,7 @@ exports.getIteratorMethod = getIteratorMethod
  * })
  *
  * @template T the type of each iterated value
- * @param {Iterable<T>|Array<T>} collection
+ * @param {Iterable<T>|{ length: number }} collection
  *   The Iterable or array to iterate over.
  * @param {function(T, number, object)} callback
  *   Function to execute for each iteration, taking up to three arguments
@@ -293,7 +293,7 @@ exports.forEach = forEach
  * iterator.next() // { value: undefined, done: true }
  *
  * @template T the type of each iterated value
- * @param {Iterable<T>|Array<T>} collection
+ * @param {Iterable<T>|{ length: number }} collection
  *   An Iterable or Array-like object to produce an Iterator.
  * @return {Iterator<T>} new Iterator instance.
  */

@@ -353,7 +353,7 @@ Note: providing an infinite Iterator to forEach will produce an error.
 
 **Parameters**
 
--   `collection` **(Iterable&lt;T> | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;T>)** The Iterable or array to iterate over.
+-   `collection` **(Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** The Iterable or array to iterate over.
 -   `callback` **function (T, [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Function to execute for each iteration, taking up to three arguments
 -   `thisArg`  Optional. Value to use as `this` when executing `callback`.
 
@@ -394,7 +394,7 @@ does _not_ skip over "holes".
 
 **Parameters**
 
--   `collection` **(Iterable&lt;T> | [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;T>)** An Iterable or Array-like object to produce an Iterator.
+-   `collection` **(Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** An Iterable or Array-like object to produce an Iterator.
 
 **Examples**
 
