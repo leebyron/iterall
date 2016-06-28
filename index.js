@@ -23,8 +23,8 @@ var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  * not defined.
  *
  * Use `$$ITERATOR` for defining new Iterables instead of `Symbol.iterator`,
- * but do not use it for accessing existing Iterables, instead use `getIterator`
- * or `isIterable`.
+ * but do not use it for accessing existing Iterables, instead use
+ * `getIterator()` or `isIterable()`.
  *
  * @example
  *
