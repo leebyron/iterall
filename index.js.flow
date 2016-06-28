@@ -8,19 +8,19 @@
 
 declare export var $$ITERATOR: $SymbolIterator | string
 
-declare export function isIterable(obj: mixed): boolean
+declare export function isIterable(obj: any): boolean
 
-declare export function isCollection(obj: mixed): boolean
+declare export function isCollection(obj: any): boolean
 
 declare export function getIterator(iterable: Iterable<TValue>): Iterator<TValue>
-declare export function getIterator(iterable: mixed): void | Iterator<mixed>
+declare export function getIterator(iterable: any): void | Iterator<mixed>
 
 declare export function getIteratorMethod(iterable: Iterable<TValue>): () => Iterator<TValue>
-declare export function getIteratorMethod(iterable: mixed): void | () => Iterator<mixed>
+declare export function getIteratorMethod(iterable: any): void | () => Iterator<mixed>
 
-declare export function forEach<TCollection: Iterable<TValue>>(collection: TCollection, callbackFn: (value: TValue, index: number, collection: TCollection) => any, thisArg?: mixed): void
-declare export function forEach<TCollection: { length: number }>(collection: TCollection, callbackFn: (value: mixed, index: number, collection: TCollection) => any, thisArg?: mixed): void
+declare export function forEach<TCollection: Iterable<TValue>>(collection: TCollection, callbackFn: (value: TValue, index: number, collection: TCollection) => any, thisArg?: any): void
+declare export function forEach<TCollection: { length: number }>(collection: TCollection, callbackFn: (value: mixed, index: number, collection: TCollection) => any, thisArg?: any): void
 
 declare export function createIterator(collection: Iterable<TValue>): Iterator<TValue>
 declare export function createIterator(collection: { length: number }): Iterator<mixed>
-declare export function createIterator(collection: mixed): void | Iterator<mixed>
+declare export function createIterator(collection: any): void | Iterator<mixed>
