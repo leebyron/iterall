@@ -167,22 +167,37 @@ exports.getIteratorMethod = getIteratorMethod
  * Given an object which either implements the Iterable protocol or is
  * "Array-like", iterate over it, calling the `callback` at each iteration.
  *
- * Similar to [Array.prototype.forEach][], the `callback` function accepts three
- * arguments, and is provided with `thisArg` as the calling context.
+ * Use `forEach` where you would expect to use a `for ... of` loop in ES6.
+ * However `forEach` adheres to the behavior of [Array#forEach][] described in
+ * the ECMAScript specification, skipping over "holes" in Array-likes. It will
+ * also delegate to a `forEach` method on `collection` if one is defined,
+ * ensuring native performance for `Arrays`.
  *
- * `forEach` adheres to the behavior described in the ECMAScript specification,
- * skipping over "holes" in Arrays and Array-likes.
+ * Similar to [Array#forEach][], the `callback` function accepts three
+ * arguments, and is provided with `thisArg` as the calling context.
  *
  * Note: providing an infinite Iterator to forEach will produce an error.
  *
- * [Array.prototype.forEach]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
+ * [Array#forEach]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach
  *
  * @example
  *
  * var forEach = require('iterall').forEach
  *
- * forEach(myIterable, function (value, index) {
- *   console.log(value, index)
+ * forEach(myIterable, function (value, index, iterable) {
+ *   console.log(value, index, iterable === myIterable)
+ * })
+ *
+ * @example
+ *
+ * // ES6:
+ * for (let value of myIterable) {
+ *   console.log(value)
+ * }
+ *
+ * // Any JavaScript environment:
+ * forEach(myIterable, function (value) {
+ *   console.log(value)
  * })
  *
  * @template T the type of each iterated value
