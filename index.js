@@ -16,10 +16,10 @@ var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  * for producing an Iterator. Typically represents the value `Symbol.iterator`.
  *
  * `Symbol` is defined in ES2015 environments, however some transitioning
- * JavaScript environments, such as older versions of Node define Symbol, but
+ * JavaScript environments, such as older versions of Node define `Symbol`, but
  * do not define `Symbol.iterator`. Older versions of Mozilla Firefox,
  * which originally introduced the Iterable protocol, used the string
- * value `"@@iterator"`. This string value is used when Symbol.iterator is
+ * value `"@@iterator"`. This string value is used when `Symbol.iterator` is
  * not defined.
  *
  * Use `$$ITERATOR` for defining new Iterables instead of `Symbol.iterator`,
@@ -36,10 +36,14 @@ var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  * }
  *
  * Counter.prototype[$$ITERATOR] = function () {
- *   if (this.num >= this.to) {
- *     return { value: undefined, done: true }
+ *   return {
+ *     next() {
+ *       if (this.num >= this.to) {
+ *         return { value: undefined, done: true }
+ *       }
+ *       return { value: this.num++ }
+ *     }
  *   }
- *   return { value: this.num++ }
  * }
  *
  * @type {Symbol|string}
@@ -49,7 +53,7 @@ exports.$$ITERATOR = $$ITERATOR
 
 /**
  * Returns true if the provided object implements the Iterator protocol via
- * either implementing Symbol.iterator or '@@iterator' method.
+ * either implementing a `Symbol.iterator` or `"@@iterator"` method.
  *
  * @example
  *
@@ -58,7 +62,7 @@ exports.$$ITERATOR = $$ITERATOR
  * isIterable('ABC') // true
  * isIterable({ key: 'value' }) // false
  *
- * @param {*} obj
+ * @param obj
  *   A value which might be implement the Iterable protocol.
  * @return {boolean} true if Iterable.
  */
@@ -69,14 +73,13 @@ exports.isIterable = isIterable
 
 /**
  * Returns true if the provided object is an Object (i.e. not a string literal)
- * and is either "Array-like" due to having a numeric `length` property, or is
- * Iterable.
+ * and is either Iterable or "Array-like" due to having a numeric
+ * `length` property.
  *
  * This may be used in place of [Array.isArray()][isArray] to determine if an
  * object can be iterated-over. It always excludes string literals and includes
  * Arrays (regardless of if it is Iterable). It also includes other Array-like
- * objects such as NodeList, TypedArray, and Buffer. It also includes any Object
- * which implements the Iterable protocol.
+ * objects such as NodeList, TypedArray, and Buffer.
  *
  * @example
  *
@@ -88,7 +91,7 @@ exports.isIterable = isIterable
  *   })
  * }
  *
- * @param {*} obj
+ * @param obj
  *   An Object value which might implement the Iterable or Array-like protocols.
  * @return {boolean} true if Iterable or Array-like Object.
  */
@@ -142,7 +145,7 @@ exports.getIterator = getIterator
  * @template T the type of each iterated value
  * @param {Iterable<T>} iterable
  *   An Iterable object which defines an `@@iterator` method.
- * @return {function(): Iterator<T>} @@iterator method.
+ * @return {function(): Iterator<T>} `@@iterator` method.
  */
 function getIteratorMethod (iterable) {
   if (iterable != null) {
@@ -155,9 +158,8 @@ function getIteratorMethod (iterable) {
 exports.getIteratorMethod = getIteratorMethod
 
 /**
- * Given an object which is either Array-like (by having a numeric length
- * property) or implements the Iterable protocol, iterate over it, calling the
- * `callback` at each iteration.
+ * Given an object which either implements the Iterable protocol or is
+ * "Array-like", iterate over it, calling the `callback` at each iteration.
  *
  * Similar to [Array.prototype.forEach][], the `callback` function accepts three
  * arguments, and is provided with `thisArg` as the calling context.
