@@ -69,7 +69,7 @@ exports.$$ITERATOR = $$ITERATOR
  * isIterable({ key: 'value' }) // false
  *
  * @param obj
- *   A value which might be implement the Iterable protocol.
+ *   A value which might implement the Iterable protocol.
  * @return {boolean} true if Iterable.
  */
 function isIterable (obj) {

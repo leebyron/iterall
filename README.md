@@ -145,7 +145,7 @@ either implementing a `Symbol.iterator` or `"@@iterator"` method.
 
 **Parameters**
 
--   `obj`  A value which might be implement the Iterable protocol.
+-   `obj`  A value which might implement the Iterable protocol.
 
 **Examples**
 
