@@ -327,6 +327,25 @@ test('getIterator provides Iterator for iterable Object', () => {
   assert.deepEqual(iterator.next(), { value: undefined, done: true })
 })
 
+function oldStyleIterable () {
+  return {
+    '@@iterator' () {
+      return {
+        next () {
+          return { value: Infinity, done: false }
+        }
+      }
+    }
+  }
+}
+
+test('getIterator provides Iterator for Firefox-style Iterable', () => {
+  var iterator = getIterator(oldStyleIterable())
+  assert(iterator)
+  assert.deepEqual(iterator.next(), { value: Infinity, done: false })
+  assert.deepEqual(iterator.next(), { value: Infinity, done: false })
+})
+
 test('getIterator provides Iterator for Generator', () => {
   var iterator = getIterator(genSampleFib())
   assert(iterator)

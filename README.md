@@ -72,7 +72,7 @@ built-in data-structures including [Array][array#@@iterator]. Older JavaScript
 environments do not implement `Array.prototype[@@iterator]()`, however this is
 only a minor problem. JavaScript has another related and much older protocol:
 [Array-like]. An value is "Array-like" if it has a numeric `length` property and
-indexed access, but does not necessarily have methods like `push` or `forEach`.
+indexed access, but does not necessarily have methods like `.push()` or `.forEach()`.
 Much like [`Array.from`][array.from], `iterall`'s `forEach()` and
 `createIterator()` methods also accept collections which are not Iterable but
 are Array-like. This means that `iterall` can be used with [Array][],
@@ -83,7 +83,7 @@ When libraries only accept Arrays as input, they stick developers with a tough
 choice: limit which data-structures can be used or limit the ability to use that
 library. Accepting Iterables removes this false dichotomy, and allows libraries
 to be more generally useful. There's no need to limit to ES2015 environments and
-bleeding-edge browsers to leverage `Iterables`.
+bleeding-edge browsers to accept `Iterable`.
 
 Only using Arrays can limit the efficiency and usefulness of your application
 code, but custom data-structures can often feel like a fish out of water in
