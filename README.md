@@ -92,6 +92,63 @@ Protocols like `Iterable` helps these new data-structures work with more
 libraries and built-in JavaScript behavior. There's no need to limit to ES2015
 environments and bleeding-edge browsers to implement `Iterable`.
 
+## FAQ
+
+> Aren't Iterables slower than Arrays? I want the highest performance possible.
+
+Arrays _are_ Iterables. Iterable is a protocol that Array's adhere to in ES2015.
+It's true that creating an Iterator and stepping through it can present some
+overhead compared to a simple for-loop or `array.forEach`. However `iterall`'s
+`forEach` will delegate directly to `array.forEach` and will use a for-loop for
+Array-like objects, ensuring the best performance for Arrays while still
+maintaining support for all Iterables.
+
+> Should my library functions also return Iterables instead of Arrays? Won't
+> that be limiting?
+
+That could definitely be limiting if you return some generic Iterable where you
+could have returned an Array, and (depending on context) I wouldn't recommend
+you stop returning Arrays from functions if that's what you're doing today.
+However if your functions are returning some collection data-structure that is
+_not_ an Array, you should certainly consider having them implement the
+Iterable protocol so they can be more widely useful.
+
+Here are a few examples:
+
+In [React][], render functions are expected to return view trees, where any
+node (e.g. a `<ul>`) can have many children (e.g. many `<li>`). While it could
+expect those children to always be represented as an Array, that would limit
+React's usefulness - other data-structures couldn't be used. Instead, React
+expects those children to be represented as an _Iterable_. That allows it to
+continue to accept Arrays, but also accept many other data-structures.
+
+[Immutable.js][] implements many new kinds of data-structures (including [HAMT])
+all of which implement _Iterable_, which allows them to be used in many of
+JavaScript's built-in functions, but also allows them to be used by many
+libraries which accept Iterables, including React. Also, similar to
+[`Array.from`][array.from], Immutable.js's constructors accept not only Arrays,
+by any _Iterable_, allowing you to build any of these new data-structures from
+any other data-structure.
+
+> Where are all the other functions like `map`, `filter`, and `reduce`?
+
+Those "higher order" collection functions are awesome, but they don't belong in
+this library. Instead this library should be used as a basis for building such
+a library (as it should be used for many other libraries). The `forEach`
+function provided by `iterall` can be used as the underpinning for these.
+
+As an example:
+
+```js
+function reduce (collection, reducer, initial) {
+  var reduced = initial
+  forEach(collection, function (item) {
+    reduced = reducer(reduced, item)
+  })
+  return reduced
+}
+```
+
 <!--
 
 NOTE TO CONTRIBUTORS
@@ -368,6 +425,8 @@ these.
 
 [protocol]: https://en.wikipedia.org/wiki/Protocol_(object-oriented_programming)
 
+[react]: https://facebook.github.io/react/
+
 [set]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
 
 [symbol.iterator]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/iterator
@@ -375,3 +434,5 @@ these.
 [typedarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
 
 [typescript]: http://www.typescriptlang.org/
+
+[immutable.js]: http://facebook.github.io/immutable-js/
