@@ -8,33 +8,59 @@
  * @ignore
  */
 
+/**
+ * [Iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)
+ * is a *protocol* which describes a standard way to produce a sequence of
+ * values, typically the values of the Iterable represented by this Iterator.
+ *
+ * While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterator-interface)
+ * it can be utilized by any version of JavaScript.
+ *
+ * @typedef {Object} Iterator
+ * @template T The type of each iterated value
+ * @property {function (): { value: T, done: boolean }} next
+ *   A method which produces either the next value in a sequence or a result
+ *   where the `done` property is `true` indicating the end of the Iterator.
+ */
+
+/**
+ * [Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable)
+ * is a *protocol* which when implemented allows a JavaScript object to define
+ * their iteration behavior, such as what values are looped over in a `for..of`
+ * loop or `iterall`'s `forEach` function. Many [built-in types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#Builtin_iterables)
+ * implement the Iterable protocol, including `Array` and `Map`.
+ *
+ * While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterable-interface)
+ * it can be utilized by any version of JavaScript.
+ *
+ * @typedef {Object} Iterable
+ * @template T The type of each iterated value
+ * @property {function (): Iterator<T>} Symbol.iterator
+ *   A method which produces an Iterator for this Iterable.
+ */
+
 // In ES2015 (or a polyfilled) environment, this will be Symbol.iterator
-var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
+var SYMBOL_ITERATOR = typeof Symbol === 'function' && Symbol.iterator
 
 /**
  * A property name to be used as the name of an Iterable's method responsible
- * for producing an Iterator. Typically represents the value `Symbol.iterator`.
+ * for producing an Iterator, referred to as `@@iterator`. Typically represents
+ * the value `Symbol.iterator` but falls back to the string `"@@iterator"` when
+ * `Symbol.iterator` is not defined.
  *
- * `Symbol` is defined in ES2015 environments, however some transitioning
- * JavaScript environments, such as older versions of Node define `Symbol`, but
- * do not define `Symbol.iterator`. Older versions of Mozilla Firefox,
- * which originally introduced the Iterable protocol, used the string
- * value `"@@iterator"`. This string value is used when `Symbol.iterator` is
- * not defined.
- *
- * Use `$$ITERATOR` for defining new Iterables instead of `Symbol.iterator`,
+ * Use `$$iterator` for defining new Iterables instead of `Symbol.iterator`,
  * but do not use it for accessing existing Iterables, instead use
  * `getIterator()` or `isIterable()`.
  *
  * @example
  *
- * var $$ITERATOR = require('iterall').$$ITERATOR
+ * var $$iterator = require('iterall').$$iterator
  *
  * function Counter (to) {
  *   this.to = to
  * }
  *
- * Counter.prototype[$$ITERATOR] = function () {
+ * Counter.prototype[$$iterator] = function () {
  *   return {
  *     to: this.to,
  *     num: 0,
@@ -54,8 +80,8 @@ var REAL_$$ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  *
  * @type {Symbol|string}
  */
-var $$ITERATOR = REAL_$$ITERATOR || '@@iterator'
-exports.$$ITERATOR = $$ITERATOR
+var $$iterator = SYMBOL_ITERATOR || '@@iterator'
+exports.$$iterator = $$iterator
 
 /**
  * Returns true if the provided object implements the Iterator protocol via
@@ -187,7 +213,7 @@ exports.getIterator = getIterator
  */
 function getIteratorMethod (iterable) {
   if (iterable != null) {
-    var method = REAL_$$ITERATOR && iterable[REAL_$$ITERATOR] || iterable['@@iterator']
+    var method = SYMBOL_ITERATOR && iterable[SYMBOL_ITERATOR] || iterable['@@iterator']
     if (typeof method === 'function') {
       return method
     }
@@ -318,7 +344,7 @@ function ArrayLikeIterator (obj) {
 }
 
 // Note: all Iterators are themselves Iterable.
-ArrayLikeIterator.prototype[$$ITERATOR] = function () {
+ArrayLikeIterator.prototype[$$iterator] = function () {
   return this
 }
 

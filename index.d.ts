@@ -8,7 +8,10 @@
 
 declare module "iterall" {
 
-  export var $$ITERATOR: symbol | string
+  // Note: TypeScript already has built-in definitions for
+  // Iterable<TValue> and Iterable<TValue> so they are not defined here.
+
+  export var $$iterator: symbol | string
 
   export function isIterable(obj: any): boolean
 

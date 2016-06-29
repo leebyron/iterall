@@ -11,7 +11,7 @@ This is a library for libraries. If your library takes Arrays as input, accept
 Iterables instead. If your library implements a new data-structure, make
 it Iterable.
 
-When installed via `npm`, `iterall` comes complete with [flow][] and
+When installed via `npm`, `iterall` comes complete with [Flow][] and
 [TypeScript][] definition files. Don't want to take the dependency? Feel free to
 copy code directly from this repository.
 
@@ -162,32 +162,56 @@ automatically update README.md
 
 ## API
 
-### $$ITERATOR
+### Iterable
+
+[Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable)
+is a _protocol_ which when implemented allows a JavaScript object to define
+their iteration behavior, such as what values are looped over in a `for..of`
+loop or `iterall`'s `forEach` function. Many [built-in types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#Builtin_iterables)
+implement the Iterable protocol, including `Array` and `Map`.
+
+While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterable-interface)
+it can be utilized by any version of JavaScript.
+
+**Properties**
+
+-   `Symbol.iterator` **function (): Iterator&lt;T>** A method which produces an Iterator for this Iterable.
+
+### Iterator
+
+[Iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)
+is a _protocol_ which describes a standard way to produce a sequence of
+values, typically the values of the Iterable represented by this Iterator.
+
+While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterator-interface)
+it can be utilized by any version of JavaScript.
+
+**Properties**
+
+-   `next` **function (): {value: T, done: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}** A method which produces either the next value in a sequence or a result
+      where the `done` property is `true` indicating the end of the Iterator.
+
+### $$iterator
 
 A property name to be used as the name of an Iterable's method responsible
-for producing an Iterator. Typically represents the value `Symbol.iterator`.
+for producing an Iterator, referred to as `@@iterator`. Typically represents
+the value `Symbol.iterator` but falls back to the string `"@@iterator"` when
+`Symbol.iterator` is not defined.
 
-`Symbol` is defined in ES2015 environments, however some transitioning
-JavaScript environments, such as older versions of Node define `Symbol`, but
-do not define `Symbol.iterator`. Older versions of Mozilla Firefox,
-which originally introduced the Iterable protocol, used the string
-value `"@@iterator"`. This string value is used when `Symbol.iterator` is
-not defined.
-
-Use `$$ITERATOR` for defining new Iterables instead of `Symbol.iterator`,
+Use `$$iterator` for defining new Iterables instead of `Symbol.iterator`,
 but do not use it for accessing existing Iterables, instead use
 `getIterator()` or `isIterable()`.
 
 **Examples**
 
 ```javascript
-var $$ITERATOR = require('iterall').$$ITERATOR
+var $$iterator = require('iterall').$$iterator
 
 function Counter (to) {
   this.to = to
 }
 
-Counter.prototype[$$ITERATOR] = function () {
+Counter.prototype[$$iterator] = function () {
   return {
     to: this.to,
     num: 0,
