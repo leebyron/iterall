@@ -221,7 +221,7 @@ either implementing a `Symbol.iterator` or `"@@iterator"` method.
 var isIterable = require('iterall').isIterable
 isIterable([ 1, 2, 3 ]) // true
 isIterable('ABC') // true
-isArrayLike({ length: 1, 0: 'Alpha' }) // false
+isIterable({ length: 1, 0: 'Alpha' }) // false
 isIterable({ key: 'value' }) // false
 isIterable(new Map()) // true
 ```
@@ -271,8 +271,8 @@ var isCollection = require('iterall').isCollection
 isCollection([ 1, 2, 3 ]) // true
 isCollection('ABC') // false
 isCollection({ length: 1, 0: 'Alpha' }) // true
-isArrayLike({ key: 'value' }) // false
-isArrayLike(new Map()) // true
+isCollection({ key: 'value' }) // false
+isCollection(new Map()) // true
 ```
 
 ```javascript
