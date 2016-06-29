@@ -9,7 +9,7 @@
 declare module "iterall" {
 
   // Note: TypeScript already has built-in definitions for
-  // Iterable<TValue> and Iterable<TValue> so they are not defined here.
+  // Iterable<TValue> and Iterator<TValue> so they are not defined here.
 
   export var $$iterator: symbol | string
 

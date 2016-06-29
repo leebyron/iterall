@@ -9,7 +9,7 @@
  */
 
 // Note: Flow already has built-in definitions for
-// Iterable<TValue> and Iterable<TValue> so they are not defined here.
+// Iterable<TValue> and Iterator<TValue> so they are not defined here.
 
 declare export var $$iterator: $SymbolIterator | string
 
