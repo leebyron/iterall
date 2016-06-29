@@ -25,24 +25,24 @@ function test (name, rule) {
   }
 }
 
-// $$ITERATOR
+// $$iterator
 
-var $$ITERATOR = require('./').$$ITERATOR
+var $$iterator = require('./').$$iterator
 
-test('$$ITERATOR is always available', () =>
-  $$ITERATOR != null
+test('$$iterator is always available', () =>
+  $$iterator != null
 )
 
-test('$$ITERATOR is Symbol.iterator when available', () =>
-  Symbol.iterator && $$ITERATOR === Symbol.iterator
+test('$$iterator is Symbol.iterator when available', () =>
+  Symbol.iterator && $$iterator === Symbol.iterator
 )
 
-test('$$ITERATOR can be used to create new iterables', () => {
+test('$$iterator can be used to create new iterables', () => {
   function Counter (to) {
     this.to = to
   }
 
-  Counter.prototype[$$ITERATOR] = function () {
+  Counter.prototype[$$iterator] = function () {
     return {
       to: this.to,
       num: 0,
@@ -56,7 +56,7 @@ test('$$ITERATOR can be used to create new iterables', () => {
   }
 
   var counter = new Counter(3)
-  var iterator = counter[$$ITERATOR]()
+  var iterator = counter[$$iterator]()
 
   assert.deepEqual(iterator.next(), { value: 0, done: false })
   assert.deepEqual(iterator.next(), { value: 1, done: false })
@@ -129,7 +129,7 @@ test('isIterable false for non-iterable Array-like Object', () =>
 
 function iterSampleFib () {
   return {
-    [$$ITERATOR] () {
+    [$$iterator] () {
       var x = 0
       var y = 1
       var iter = {
@@ -168,7 +168,7 @@ test('isIterable true for Generator', () => {
 
 function badIterable () {
   return {
-    [$$ITERATOR]: {
+    [$$iterator]: {
       next: function () {
         return { value: 'value', done: false }
       }
