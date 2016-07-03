@@ -230,7 +230,32 @@ for (var number of counter) {
 }
 ```
 
-### isIterable
+### SYMBOL_ITERATOR
+
+If the provided object implements the Iterator protocol, the method
+responsible for producing its Iterator object is returned.
+
+This is used in rare cases for performance tuning. This method must be called
+with obj as the contextual this-argument.
+
+**Parameters**
+
+-   `iterable` **Iterable&lt;T>** An Iterable object which defines an `@@iterator` method.
+
+**Examples**
+
+```javascript
+var getIteratorMethod = require('iterall').getIteratorMethod
+var myArray = [ 1, 2, 3 ]
+var method = getIteratorMethod(myArray)
+if (method) {
+  var iterator = method.call(myArray)
+}
+```
+
+Returns **function (): Iterator&lt;T>** `@@iterator` method.
+
+### getIteratorMethod
 
 Returns true if the provided object implements the Iterator protocol via
 either implementing a `Symbol.iterator` or `"@@iterator"` method.
@@ -251,6 +276,28 @@ isIterable(new Map()) // true
 ```
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if Iterable.
+
+### getIteratorMethod
+
+If the provided object implements the Iterator protocol, its Iterator object
+is returned. Otherwise returns undefined.
+
+**Parameters**
+
+-   `iterable` **Iterable&lt;T>** An Iterable object which is the source of an Iterator.
+
+**Examples**
+
+```javascript
+var getIterator = require('iterall').getIterator
+var iterator = getIterator([ 1, 2, 3 ])
+iterator.next() // { value: 1, done: false }
+iterator.next() // { value: 2, done: false }
+iterator.next() // { value: 3, done: false }
+iterator.next() // { value: undefined, done: true }
+```
+
+Returns **Iterator&lt;T>** new Iterator instance.
 
 ### isArrayLike
 
@@ -274,7 +321,7 @@ isArrayLike(new Map()) // false
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if Array-like.
 
-### isCollection
+### isArrayLike
 
 Returns true if the provided object is an Object (i.e. not a string literal)
 and is either Iterable or Array-like.
@@ -311,53 +358,6 @@ if (isCollection(obj)) {
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if Iterable or Array-like Object.
 
 ### getIterator
-
-If the provided object implements the Iterator protocol, its Iterator object
-is returned. Otherwise returns undefined.
-
-**Parameters**
-
--   `iterable` **Iterable&lt;T>** An Iterable object which is the source of an Iterator.
-
-**Examples**
-
-```javascript
-var getIterator = require('iterall').getIterator
-var iterator = getIterator([ 1, 2, 3 ])
-iterator.next() // { value: 1, done: false }
-iterator.next() // { value: 2, done: false }
-iterator.next() // { value: 3, done: false }
-iterator.next() // { value: undefined, done: true }
-```
-
-Returns **Iterator&lt;T>** new Iterator instance.
-
-### getIteratorMethod
-
-If the provided object implements the Iterator protocol, the method
-responsible for producing its Iterator object is returned.
-
-This is used in rare cases for performance tuning. This method must be called
-with obj as the contextual this-argument.
-
-**Parameters**
-
--   `iterable` **Iterable&lt;T>** An Iterable object which defines an `@@iterator` method.
-
-**Examples**
-
-```javascript
-var getIteratorMethod = require('iterall').getIteratorMethod
-var myArray = [ 1, 2, 3 ]
-var method = getIteratorMethod(myArray)
-if (method) {
-  var iterator = method.call(myArray)
-}
-```
-
-Returns **function (): Iterator&lt;T>** `@@iterator` method.
-
-### forEach
 
 Given an object which either implements the Iterable protocol or is
 Array-like, iterate over it, calling the `callback` at each iteration.
@@ -403,7 +403,7 @@ forEach(myIterable, function (value) {
 })
 ```
 
-### createIterator
+### getIterator
 
 Similar to `getIterator()`, this method returns a new Iterator given an
 Iterable. However it will also create an Iterator for a non-Iterable
