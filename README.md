@@ -127,7 +127,7 @@ all of which implement _Iterable_, which allows them to be used in many of
 JavaScript's built-in functions, but also allows them to be used by many
 libraries which accept Iterables, including React. Also, similar to
 [`Array.from`][array.from], Immutable.js's constructors accept not only Arrays,
-by any _Iterable_, allowing you to build any of these new data-structures from
+but any _Iterable_, allowing you to build any of these new data-structures from
 any other data-structure.
 
 > Where are all the other functions like `map`, `filter`, and `reduce`?
