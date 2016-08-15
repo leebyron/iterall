@@ -96,7 +96,7 @@ environments and bleeding-edge browsers to implement `Iterable`.
 
 > Aren't Iterables slower than Arrays? I want the highest performance possible.
 
-Arrays _are_ Iterables. Iterable is a protocol that Array's adhere to in ES2015.
+Arrays _are_ Iterables. Iterable is a protocol that Arrays adhere to in ES2015.
 It's true that creating an Iterator and stepping through it can present some
 overhead compared to a simple for-loop or `array.forEach`. However `iterall`'s
 `forEach` will delegate directly to `array.forEach` and will use a for-loop for
