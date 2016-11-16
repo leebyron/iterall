@@ -23,7 +23,7 @@ declare module "iterall" {
   export function getIterator(iterable: any): void | Iterator<any>
 
   export function getIteratorMethod<TValue>(iterable: Iterable<TValue>): () => Iterator<TValue>
-  export function getIteratorMethod(iterable: any): () => Iterator<any> | void
+  export function getIteratorMethod(iterable: any): void | () => Iterator<any>
 
   export function forEach<TValue, TCollection extends Iterable<TValue>>(collection: TCollection, callbackFn: (value: TValue, index: number, collection: TCollection) => any, thisArg?: any): void
   export function forEach<TCollection extends { length: number }>(collection: TCollection, callbackFn: (value: any, index: number, collection: TCollection) => any, thisArg?: any): void
