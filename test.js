@@ -27,7 +27,7 @@ function test (name, rule) {
 
 // $$iterator
 
-var $$iterator = require('./').$$iterator
+var $$iterator = require('./lib/$$iterator')
 
 test('$$iterator is always available', () =>
   $$iterator != null
@@ -67,7 +67,7 @@ test('$$iterator can be used to create new iterables', () => {
 
 // isIterable
 
-var isIterable = require('./').isIterable
+var isIterable = require('./lib/isIterable')
 
 test('isIterable true for Array', () =>
   isIterable([]) === true
@@ -182,7 +182,7 @@ test('isIterable false for incorrect Iterable', () => {
 
 // isArrayLike
 
-var isArrayLike = require('./').isArrayLike
+var isArrayLike = require('./lib/isArrayLike')
 
 test('isArrayLike true for Array', () =>
   isArrayLike([]) === true
@@ -248,7 +248,7 @@ test('isArrayLike false for Generator', () => {
 
 // isCollection
 
-var isCollection = require('./').isCollection
+var isCollection = require('./lib/isCollection')
 
 test('isCollection true for Array', () =>
   isCollection([]) === true
@@ -316,7 +316,7 @@ test('isCollection false for incorrect Iterable', () => {
 
 // getIterator
 
-var getIterator = require('./').getIterator
+var getIterator = require('./lib/getIterator')
 
 test('getIterator provides Iterator for Array', () => {
   var iterator = getIterator([ 'Alpha', 'Bravo', 'Charlie' ])
@@ -432,7 +432,7 @@ test('getIteratorMethod undefined for incorrect Iterable', () =>
 
 // getIteratorMethod
 
-var getIteratorMethod = require('./').getIteratorMethod
+var getIteratorMethod = require('./lib/getIteratorMethod')
 
 test('getIteratorMethod provides Array#values for Array', () => {
   if (Array.prototype.values) {
@@ -458,7 +458,7 @@ test('getIteratorMethod undefined for incorrect Iterable', () =>
 
 // forEach
 
-var forEach = require('./').forEach
+var forEach = require('./lib/forEach')
 
 function createSpy () {
   var calls = []
@@ -598,7 +598,7 @@ test('forEach iterates over holey Array-like', () => {
 
 // createIterator
 
-var createIterator = require('./').createIterator
+var createIterator = require('./lib/createIterator')
 
 test('createIterator returns undefined for null', () =>
   createIterator(null) === undefined
