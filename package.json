@@ -35,9 +35,9 @@
   },
   "homepage": "https://github.com/leebyron/iterall#readme",
   "devDependencies": {
-    "coveralls": "2.11.9",
+    "coveralls": "2.13.0",
     "documentation": "4.0.0-beta5",
-    "nyc": "6.6.1",
+    "nyc": "10.2.0",
     "standard": "7.1.2"
   }
 }
