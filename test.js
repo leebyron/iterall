@@ -8,7 +8,7 @@
 
 var assert = require('assert')
 
-function test (name, rule) {
+function test(name, rule) {
   try {
     var result = rule()
     if (result !== undefined) {
@@ -18,9 +18,9 @@ function test (name, rule) {
   } catch (error) {
     console.log('\x1B[31m  \u2718 \x1B[0m ' + name)
     process.exitCode = 1
-    process.on('beforeExit', function () {
+    process.on('beforeExit', function() {
       console.error('\n\x1B[41m ' + name + ' \x1B[0m')
-      console.error(error && error.stack || error)
+      console.error((error && error.stack) || error)
     })
   }
 }
@@ -29,24 +29,21 @@ function test (name, rule) {
 
 var $$iterator = require('./').$$iterator
 
-test('$$iterator is always available', () =>
-  $$iterator != null
-)
+test('$$iterator is always available', () => $$iterator != null)
 
 test('$$iterator is Symbol.iterator when available', () =>
-  Symbol.iterator && $$iterator === Symbol.iterator
-)
+  Symbol.iterator && $$iterator === Symbol.iterator)
 
 test('$$iterator can be used to create new iterables', () => {
-  function Counter (to) {
+  function Counter(to) {
     this.to = to
   }
 
-  Counter.prototype[$$iterator] = function () {
+  Counter.prototype[$$iterator] = function() {
     return {
       to: this.to,
       num: 0,
-      next () {
+      next() {
         if (this.num >= this.to) {
           return { value: undefined, done: true }
         }
@@ -69,52 +66,40 @@ test('$$iterator can be used to create new iterables', () => {
 
 var isIterable = require('./').isIterable
 
-test('isIterable true for Array', () =>
-  isIterable([]) === true
-)
+test('isIterable true for Array', () => isIterable([]) === true)
 
 test('isIterable true for TypedArray', () =>
-  isIterable(new Int8Array()) === true
-)
+  isIterable(new Int8Array()) === true)
 
 test('isIterable true for String', () =>
   isIterable('A') === true &&
   isIterable('0') === true &&
   isIterable(new String('ABC')) === true && // eslint-disable-line no-new-wrappers
-  isIterable('') === true
-)
+  isIterable('') === true)
 
 test('isIterable false for Number', () =>
   isIterable(1) === false &&
   isIterable(0) === false &&
   isIterable(new Number(123)) === false && // eslint-disable-line no-new-wrappers
-  isIterable(NaN) === false
-)
+  isIterable(NaN) === false)
 
 test('isIterable false for Boolean', () =>
   isIterable(true) === false &&
   isIterable(false) === false &&
-  isIterable(new Boolean(true)) === false // eslint-disable-line no-new-wrappers
-)
+  isIterable(new Boolean(true)) === false) // eslint-disable-line no-new-wrappers
 
-test('isIterable false for null', () =>
-  isIterable(null) === false
-)
+test('isIterable false for null', () => isIterable(null) === false)
 
-test('isIterable false for undefined', () =>
-  isIterable(undefined) === false
-)
+test('isIterable false for undefined', () => isIterable(undefined) === false)
 
 test('isIterable false for non-iterable Object', () =>
-  isIterable({}) === false &&
-  isIterable({ iterable: true }) === false
-)
+  isIterable({}) === false && isIterable({ iterable: true }) === false)
 
-function argumentsObject () {
+function argumentsObject() {
   return arguments
 }
 
-function arrayLike () {
+function arrayLike() {
   return {
     length: 3,
     0: 'Alpha',
@@ -124,16 +109,15 @@ function arrayLike () {
 }
 
 test('isIterable false for non-iterable Array-like Object', () =>
-  isIterable(arrayLike()) === false
-)
+  isIterable(arrayLike()) === false)
 
-function iterSampleFib () {
+function iterSampleFib() {
   return {
-    [$$iterator] () {
+    [$$iterator]() {
       var x = 0
       var y = 1
       var iter = {
-        next () {
+        next() {
           assert.equal(this, iter)
           if (x < 10) {
             x = x + y
@@ -152,7 +136,7 @@ test('isIterable true for iterable Object', () => {
   isIterable(iterSampleFib()) === true
 })
 
-function * genSampleFib () {
+function* genSampleFib() {
   var x = 0
   var y = 1
   while (x < 10) {
@@ -166,10 +150,10 @@ test('isIterable true for Generator', () => {
   isIterable(genSampleFib()) === true
 })
 
-function badIterable () {
+function badIterable() {
   return {
     [$$iterator]: {
-      next: function () {
+      next: function() {
         return { value: 'value', done: false }
       }
     }
@@ -184,59 +168,44 @@ test('isIterable false for incorrect Iterable', () => {
 
 var isArrayLike = require('./').isArrayLike
 
-test('isArrayLike true for Array', () =>
-  isArrayLike([]) === true
-)
+test('isArrayLike true for Array', () => isArrayLike([]) === true)
 
 test('isArrayLike true for TypedArray', () =>
-  isArrayLike(new Int8Array()) === true
-)
+  isArrayLike(new Int8Array()) === true)
 
 test('isArrayLike true for String', () =>
   isArrayLike('A') === true &&
   isArrayLike('0') === true &&
   isArrayLike('') === true &&
-  isArrayLike(new String('ABC')) === true // eslint-disable-line no-new-wrappers
-)
+  isArrayLike(new String('ABC')) === true) // eslint-disable-line no-new-wrappers
 
 test('isArrayLike false for Number', () =>
   isArrayLike(1) === false &&
   isArrayLike(0) === false &&
   isArrayLike(new Number(123)) === false && // eslint-disable-line no-new-wrappers
-  isArrayLike(NaN) === false
-)
+  isArrayLike(NaN) === false)
 
 test('isArrayLike false for Boolean', () =>
   isArrayLike(true) === false &&
   isArrayLike(false) === false &&
-  isArrayLike(new Boolean(true)) === false // eslint-disable-line no-new-wrappers
-)
+  isArrayLike(new Boolean(true)) === false) // eslint-disable-line no-new-wrappers
 
-test('isArrayLike false for null', () =>
-  isArrayLike(null) === false
-)
+test('isArrayLike false for null', () => isArrayLike(null) === false)
 
-test('isArrayLike false for undefined', () =>
-  isArrayLike(undefined) === false
-)
+test('isArrayLike false for undefined', () => isArrayLike(undefined) === false)
 
 test('isArrayLike false for non-iterable Object', () =>
-  isArrayLike({}) === false &&
-  isArrayLike({ iterable: true }) === false
-)
+  isArrayLike({}) === false && isArrayLike({ iterable: true }) === false)
 
 test('isArrayLike true for arguments Object', () =>
-  isArrayLike(argumentsObject()) === true
-)
+  isArrayLike(argumentsObject()) === true)
 
 test('isArrayLike true for non-iterable Array-like Object', () =>
-  isArrayLike(arrayLike()) === true
-)
+  isArrayLike(arrayLike()) === true)
 
 test('isArrayLike false for weird length Object', () =>
   isArrayLike({ length: -1 }) === false &&
-  isArrayLike({ length: 0.25 }) === false
-)
+  isArrayLike({ length: 0.25 }) === false)
 
 test('isArrayLike false for iterable Object', () => {
   isArrayLike(iterSampleFib()) === false
@@ -250,57 +219,43 @@ test('isArrayLike false for Generator', () => {
 
 var isCollection = require('./').isCollection
 
-test('isCollection true for Array', () =>
-  isCollection([]) === true
-)
+test('isCollection true for Array', () => isCollection([]) === true)
 
 test('isCollection true for TypedArray', () =>
-  isCollection(new Int8Array()) === true
-)
+  isCollection(new Int8Array()) === true)
 
 test('isCollection false for String literal', () =>
   isCollection('A') === false &&
   isCollection('0') === false &&
-  isCollection('') === false
-)
+  isCollection('') === false)
 
 test('isCollection true for String Object', () =>
-  isCollection(new String('ABC')) === true // eslint-disable-line no-new-wrappers
-)
+  isCollection(new String('ABC')) === true) // eslint-disable-line no-new-wrappers
 
 test('isCollection false for Number', () =>
   isCollection(1) === false &&
   isCollection(0) === false &&
   isCollection(new Number(123)) === false && // eslint-disable-line no-new-wrappers
-  isCollection(NaN) === false
-)
+  isCollection(NaN) === false)
 
 test('isCollection false for Boolean', () =>
   isCollection(true) === false &&
   isCollection(false) === false &&
-  isCollection(new Boolean(true)) === false // eslint-disable-line no-new-wrappers
-)
+  isCollection(new Boolean(true)) === false) // eslint-disable-line no-new-wrappers
 
-test('isCollection false for null', () =>
-  isCollection(null) === false
-)
+test('isCollection false for null', () => isCollection(null) === false)
 
 test('isCollection false for undefined', () =>
-  isCollection(undefined) === false
-)
+  isCollection(undefined) === false)
 
 test('isCollection false for non-iterable Object', () =>
-  isCollection({}) === false &&
-  isCollection({ iterable: true }) === false
-)
+  isCollection({}) === false && isCollection({ iterable: true }) === false)
 
 test('isCollection true for arguments Object', () =>
-  isCollection(argumentsObject()) === true
-)
+  isCollection(argumentsObject()) === true)
 
 test('isCollection true for non-iterable Array-like Object', () =>
-  isCollection(arrayLike()) === true
-)
+  isCollection(arrayLike()) === true)
 
 test('isCollection true for iterable Object', () => {
   isCollection(iterSampleFib()) === true
@@ -319,7 +274,7 @@ test('isCollection false for incorrect Iterable', () => {
 var getIterator = require('./').getIterator
 
 test('getIterator provides Iterator for Array', () => {
-  var iterator = getIterator([ 'Alpha', 'Bravo', 'Charlie' ])
+  var iterator = getIterator(['Alpha', 'Bravo', 'Charlie'])
   assert(iterator)
   assert.deepEqual(iterator.next(), { value: 'Alpha', done: false })
   assert.deepEqual(iterator.next(), { value: 'Bravo', done: false })
@@ -356,28 +311,22 @@ test('getIterator undefined for Number', () =>
   getIterator(1) === undefined &&
   getIterator(0) === undefined &&
   getIterator(new Number(123)) === undefined && // eslint-disable-line no-new-wrappers
-  getIterator(NaN) === undefined
-)
+  getIterator(NaN) === undefined)
 
 test('getIterator undefined for Boolean', () =>
   getIterator(true) === undefined &&
   getIterator(false) === undefined &&
-  getIterator(new Boolean(true)) === undefined // eslint-disable-line no-new-wrappers
-)
+  getIterator(new Boolean(true)) === undefined) // eslint-disable-line no-new-wrappers
 
-test('getIterator undefined for null', () =>
-  getIterator(null) === undefined
-)
+test('getIterator undefined for null', () => getIterator(null) === undefined)
 
 test('getIterator undefined for undefined', () =>
-  getIterator(undefined) === undefined
-)
+  getIterator(undefined) === undefined)
 
 test('getIterator undefined for non-iterable Object', () =>
   getIterator({}) === undefined &&
   getIterator({ iterable: true }) === undefined &&
-  getIterator(arrayLike()) === undefined
-)
+  getIterator(arrayLike()) === undefined)
 
 test('getIterator provides Iterator for iterable Object', () => {
   var iterator = getIterator(iterSampleFib())
@@ -393,11 +342,11 @@ test('getIterator provides Iterator for iterable Object', () => {
   assert.deepEqual(iterator.next(), { value: undefined, done: true })
 })
 
-function oldStyleIterable () {
+function oldStyleIterable() {
   return {
-    '@@iterator' () {
+    '@@iterator'() {
       return {
-        next () {
+        next() {
           return { value: Infinity, done: false }
         }
       }
@@ -427,8 +376,7 @@ test('getIterator provides Iterator for Generator', () => {
 })
 
 test('getIteratorMethod undefined for incorrect Iterable', () =>
-  getIterator(badIterable()) === undefined
-)
+  getIterator(badIterable()) === undefined)
 
 // getIteratorMethod
 
@@ -436,34 +384,30 @@ var getIteratorMethod = require('./').getIteratorMethod
 
 test('getIteratorMethod provides Array#values for Array', () => {
   if (Array.prototype.values) {
-    assert.equal(getIteratorMethod([ 1, 2, 3 ]), Array.prototype.values)
+    assert.equal(getIteratorMethod([1, 2, 3]), Array.prototype.values)
   }
 })
 
 test('getIteratorMethod provides function for String', () =>
-  typeof getIteratorMethod('') === 'function'
-)
+  typeof getIteratorMethod('') === 'function')
 
 test('getIteratorMethod provides function for Iterable', () =>
-  typeof getIteratorMethod(iterSampleFib()) === 'function'
-)
+  typeof getIteratorMethod(iterSampleFib()) === 'function')
 
 test('getIteratorMethod provides function for Generator', () =>
-  typeof getIteratorMethod(genSampleFib()) === 'function'
-)
+  typeof getIteratorMethod(genSampleFib()) === 'function')
 
 test('getIteratorMethod undefined for incorrect Iterable', () =>
-  getIteratorMethod(badIterable()) === undefined
-)
+  getIteratorMethod(badIterable()) === undefined)
 
 // forEach
 
 var forEach = require('./').forEach
 
-function createSpy () {
+function createSpy() {
   var calls = []
-  function spyFn () {
-    calls.push([ this, [ ...arguments ] ])
+  function spyFn() {
+    calls.push([this, [...arguments]])
   }
   spyFn.calls = calls
   return spyFn
@@ -486,20 +430,20 @@ test('forEach iterates over string literal', () => {
   var myStr = 'ABC'
   forEach(myStr, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'A', 0, myStr ] ],
-    [ spy, [ 'B', 1, myStr ] ],
-    [ spy, [ 'C', 2, myStr ] ]
+    [spy, ['A', 0, myStr]],
+    [spy, ['B', 1, myStr]],
+    [spy, ['C', 2, myStr]]
   ])
 })
 
 test('forEach iterates over Array', () => {
   var spy = createSpy()
-  var myArray = [ 'Alpha', 'Bravo', 'Charlie' ]
+  var myArray = ['Alpha', 'Bravo', 'Charlie']
   forEach(myArray, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'Alpha', 0, myArray ] ],
-    [ spy, [ 'Bravo', 1, myArray ] ],
-    [ spy, [ 'Charlie', 2, myArray ] ]
+    [spy, ['Alpha', 0, myArray]],
+    [spy, ['Bravo', 1, myArray]],
+    [spy, ['Charlie', 2, myArray]]
   ])
 })
 
@@ -511,20 +455,20 @@ test('forEach iterates over holey Array', () => {
 
   forEach(myArray, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'One', 1, myArray ] ],
-    [ spy, [ 'Three', 3, myArray ] ]
+    [spy, ['One', 1, myArray]],
+    [spy, ['Three', 3, myArray]]
   ])
 })
 
 test('forEach iterates over Iterator', () => {
   var spy = createSpy()
-  var myArray = [ 'Alpha', 'Bravo', 'Charlie' ]
+  var myArray = ['Alpha', 'Bravo', 'Charlie']
   var myIterator = getIterator(myArray)
   forEach(myIterator, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'Alpha', 0, myIterator ] ],
-    [ spy, [ 'Bravo', 1, myIterator ] ],
-    [ spy, [ 'Charlie', 2, myIterator ] ]
+    [spy, ['Alpha', 0, myIterator]],
+    [spy, ['Bravo', 1, myIterator]],
+    [spy, ['Charlie', 2, myIterator]]
   ])
 })
 
@@ -539,13 +483,13 @@ test('forEach iterates over custom Iterable', () => {
   var myIterable = iterSampleFib()
   forEach(myIterable, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 1, 0, myIterable ] ],
-    [ spy, [ 1, 1, myIterable ] ],
-    [ spy, [ 2, 2, myIterable ] ],
-    [ spy, [ 3, 3, myIterable ] ],
-    [ spy, [ 5, 4, myIterable ] ],
-    [ spy, [ 8, 5, myIterable ] ],
-    [ spy, [ 13, 6, myIterable ] ]
+    [spy, [1, 0, myIterable]],
+    [spy, [1, 1, myIterable]],
+    [spy, [2, 2, myIterable]],
+    [spy, [3, 3, myIterable]],
+    [spy, [5, 4, myIterable]],
+    [spy, [8, 5, myIterable]],
+    [spy, [13, 6, myIterable]]
   ])
 })
 
@@ -554,13 +498,13 @@ test('forEach iterates over Generator', () => {
   var myIterable = genSampleFib()
   forEach(myIterable, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 1, 0, myIterable ] ],
-    [ spy, [ 1, 1, myIterable ] ],
-    [ spy, [ 2, 2, myIterable ] ],
-    [ spy, [ 3, 3, myIterable ] ],
-    [ spy, [ 5, 4, myIterable ] ],
-    [ spy, [ 8, 5, myIterable ] ],
-    [ spy, [ 13, 6, myIterable ] ]
+    [spy, [1, 0, myIterable]],
+    [spy, [1, 1, myIterable]],
+    [spy, [2, 2, myIterable]],
+    [spy, [3, 3, myIterable]],
+    [spy, [5, 4, myIterable]],
+    [spy, [8, 5, myIterable]],
+    [spy, [13, 6, myIterable]]
   ])
 })
 
@@ -569,9 +513,9 @@ test('forEach iterates over arguments Object', () => {
   var myArgsObj = argumentsObject('Alpha', 'Bravo', 'Charlie')
   forEach(myArgsObj, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'Alpha', 0, myArgsObj ] ],
-    [ spy, [ 'Bravo', 1, myArgsObj ] ],
-    [ spy, [ 'Charlie', 2, myArgsObj ] ]
+    [spy, ['Alpha', 0, myArgsObj]],
+    [spy, ['Bravo', 1, myArgsObj]],
+    [spy, ['Charlie', 2, myArgsObj]]
   ])
 })
 
@@ -580,9 +524,9 @@ test('forEach iterates over Array-like', () => {
   var myArrayLike = arrayLike()
   forEach(myArrayLike, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'Alpha', 0, myArrayLike ] ],
-    [ spy, [ 'Bravo', 1, myArrayLike ] ],
-    [ spy, [ 'Charlie', 2, myArrayLike ] ]
+    [spy, ['Alpha', 0, myArrayLike]],
+    [spy, ['Bravo', 1, myArrayLike]],
+    [spy, ['Charlie', 2, myArrayLike]]
   ])
 })
 
@@ -591,8 +535,8 @@ test('forEach iterates over holey Array-like', () => {
   var myArrayLike = { length: 5, 1: 'One', 3: 'Three' }
   forEach(myArrayLike, spy, spy)
   assert.deepEqual(spy.calls, [
-    [ spy, [ 'One', 1, myArrayLike ] ],
-    [ spy, [ 'Three', 3, myArrayLike ] ]
+    [spy, ['One', 1, myArrayLike]],
+    [spy, ['Three', 3, myArrayLike]]
   ])
 })
 
@@ -601,12 +545,10 @@ test('forEach iterates over holey Array-like', () => {
 var createIterator = require('./').createIterator
 
 test('createIterator returns undefined for null', () =>
-  createIterator(null) === undefined
-)
+  createIterator(null) === undefined)
 
 test('createIterator returns undefined for undefined', () =>
-  createIterator(undefined) === undefined
-)
+  createIterator(undefined) === undefined)
 
 test('createIterator creates Iterator for string literal', () => {
   var iterator = createIterator('ABC')
@@ -619,7 +561,7 @@ test('createIterator creates Iterator for string literal', () => {
 })
 
 test('createIterator creates Iterator for Array', () => {
-  var iterator = createIterator([ 'Alpha', 'Bravo', 'Charlie' ])
+  var iterator = createIterator(['Alpha', 'Bravo', 'Charlie'])
   assert(iterator)
   assert.deepEqual(iterator.next(), { value: 'Alpha', done: false })
   assert.deepEqual(iterator.next(), { value: 'Bravo', done: false })
@@ -644,15 +586,14 @@ test('createIterator creates Iterator for holey Array', () => {
 })
 
 test('createIterator creates Iterator for Iterator', () => {
-  var myIterator = getIterator([ 'Alpha', 'Bravo', 'Charlie' ])
+  var myIterator = getIterator(['Alpha', 'Bravo', 'Charlie'])
   var iterator = createIterator(myIterator)
   assert(iterator)
   assert.equal(iterator, myIterator)
 })
 
 test('createIterator returns undefined for incorrect Iterable', () =>
-  createIterator(badIterable()) === undefined
-)
+  createIterator(badIterable()) === undefined)
 
 test('createIterator creates Iterator for custom Iterable', () => {
   var iterator = createIterator(iterSampleFib())
