@@ -100,7 +100,7 @@ exports.$$iterator = $$iterator
  *   A value which might implement the Iterable protocol.
  * @return {boolean} true if Iterable.
  */
-function isIterable (obj) {
+function isIterable(obj) {
   return !!getIteratorMethod(obj)
 }
 exports.isIterable = isIterable
@@ -122,7 +122,7 @@ exports.isIterable = isIterable
  *   A value which might implement the Array-like protocol.
  * @return {boolean} true if Array-like.
  */
-function isArrayLike (obj) {
+function isArrayLike(obj) {
   var length = obj != null && obj.length
   return typeof length === 'number' && length >= 0 && length % 1 === 0
 }
@@ -159,7 +159,7 @@ exports.isArrayLike = isArrayLike
  *   An Object value which might implement the Iterable or Array-like protocols.
  * @return {boolean} true if Iterable or Array-like Object.
  */
-function isCollection (obj) {
+function isCollection(obj) {
   return Object(obj) === obj && (isArrayLike(obj) || isIterable(obj))
 }
 exports.isCollection = isCollection
@@ -182,7 +182,7 @@ exports.isCollection = isCollection
  *   An Iterable object which is the source of an Iterator.
  * @return {Iterator<T>} new Iterator instance.
  */
-function getIterator (iterable) {
+function getIterator(iterable) {
   var method = getIteratorMethod(iterable)
   if (method) {
     return method.call(iterable)
@@ -211,9 +211,10 @@ exports.getIterator = getIterator
  *   An Iterable object which defines an `@@iterator` method.
  * @return {function(): Iterator<T>} `@@iterator` method.
  */
-function getIteratorMethod (iterable) {
+function getIteratorMethod(iterable) {
   if (iterable != null) {
-    var method = SYMBOL_ITERATOR && iterable[SYMBOL_ITERATOR] || iterable['@@iterator']
+    var method =
+      (SYMBOL_ITERATOR && iterable[SYMBOL_ITERATOR]) || iterable['@@iterator']
     if (typeof method === 'function') {
       return method
     }
@@ -266,7 +267,7 @@ exports.getIteratorMethod = getIteratorMethod
  * @param [thisArg]
  *   Optional. Value to use as `this` when executing `callback`.
  */
-function forEach (collection, callback, thisArg) {
+function forEach(collection, callback, thisArg) {
   if (collection != null) {
     if (typeof collection.forEach === 'function') {
       return collection.forEach(callback, thisArg)
@@ -323,7 +324,7 @@ exports.forEach = forEach
  *   An Iterable or Array-like object to produce an Iterator.
  * @return {Iterator<T>} new Iterator instance.
  */
-function createIterator (collection) {
+function createIterator(collection) {
   if (collection != null) {
     var iterator = getIterator(collection)
     if (iterator) {
@@ -338,19 +339,19 @@ exports.createIterator = createIterator
 
 // When the object provided to `createIterator` is not Iterable but is
 // Array-like, this simple Iterator is created.
-function ArrayLikeIterator (obj) {
+function ArrayLikeIterator(obj) {
   this._o = obj
   this._i = 0
 }
 
 // Note: all Iterators are themselves Iterable.
-ArrayLikeIterator.prototype[$$iterator] = function () {
+ArrayLikeIterator.prototype[$$iterator] = function() {
   return this
 }
 
 // A simple state-machine determines the IteratorResult returned, yielding
 // each value in the Array-like object in order of their indicies.
-ArrayLikeIterator.prototype.next = function () {
+ArrayLikeIterator.prototype.next = function() {
   if (this._o === void 0 || this._i >= this._o.length) {
     this._o = void 0
     return { value: void 0, done: true }
