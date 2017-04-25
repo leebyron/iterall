@@ -1,11 +1,12 @@
-# JavaScript [Iterators][] for all!
+# JavaScript [Iterators][] and [AsyncIterators][] for all!
 
 [![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![568 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-606%20B-blue.svg)
 
 `iterall` provides a few crucial utilities for implementing and working with
-[Iterables][iterators] and [Array-likes][array-like] in all JavaScript
-environments, even old versions of Internet Explorer, in a tiny library weighing
-well under 1KB when minified and gzipped.
+[Iterables][iterators], [Async Iterables][asynciterators] and
+[Array-likes][array-like] in all JavaScript environments, even old versions of
+Internet Explorer, in a tiny library weighing well under 1KB when minified
+and gzipped.
 
 This is a library for libraries. If your library takes Arrays as input, accept
 Iterables instead. If your library implements a new data-structure, make
@@ -91,6 +92,18 @@ JavaScript programs, only working with code written specifically for it.
 Protocols like `Iterable` helps these new data-structures work with more
 libraries and built-in JavaScript behavior. There's no need to limit to ES2015
 environments and bleeding-edge browsers to implement `Iterable`.
+
+## Why use AsyncIterators?
+
+In the same way that `Iterator` provides a common interface for accessing many
+different kinds of data-structures, `AsyncIterator` provides a common interface
+over a stream (or Observable) of values.
+
+Async Iterators are not yet an official part of JavaScript, however they're
+a "Stage 3" proposal to be added, and browser vendors are
+[working on adding support](https://bugs.chromium.org/p/v8/issues/detail?id=5855).
+However, Async Iterators can be both safely defined and used today by
+_any version of JavaScript_, by using the utilities in `iterall`.
 
 ## FAQ
 
@@ -435,6 +448,231 @@ iterator.next() // { value: undefined, done: true }
 
 Returns **Iterator&lt;T>** new Iterator instance.
 
+### AsyncIterator
+
+[AsyncIterator](https://tc39.github.io/proposal-async-iteration/)
+is a _protocol_ which describes a standard way to produce and consume an
+asynchronous sequence of values, typically the values of the AsyncIterable
+represented by this AsyncIterator.
+
+AsyncIterator is similar to Observable or Stream.
+
+While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
+it can be utilized by any version of JavaScript.
+
+**Properties**
+
+-   `next` **function (): [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;{value: T, done: [boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}>** A method which produces a Promise which resolves to either the next value
+      in a sequence or a result where the `done` property is `true` indicating
+      the end of the sequence of values. It may also produce a Promise which
+      becomes rejected, indicating a failure.
+
+### AsyncIterable
+
+AsyncIterable is a _protocol_ which when implemented allows a JavaScript
+object to define their asynchronous iteration behavior, such as what values
+are looped over in a `for-await-of` loop or `iterall`'s `forAwaitEach`
+function.
+
+While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
+it can be utilized by any version of JavaScript.
+
+**Properties**
+
+-   `Symbol.asyncIterator` **function (): AsyncIterator&lt;T>** A method which produces an AsyncIterator for this AsyncIterable.
+
+### $$asyncIterator
+
+A property name to be used as the name of an AsyncIterable's method
+responsible for producing an Iterator, referred to as `@@asyncIterator`.
+Typically represents the value `Symbol.asyncIterator` but falls back to the
+string `"@@asyncIterator"` when `Symbol.asyncIterator` is not defined.
+
+Use `$$asyncIterator` for defining new AsyncIterables instead of
+`Symbol.asyncIterator`, but do not use it for accessing existing Iterables,
+instead use `getAsyncIterator()` or `isAsyncIterable()`.
+
+**Examples**
+
+```javascript
+var $$asyncIterator = require('iterall').$$asyncIterator
+
+function Chirper (to) {
+  this.to = to
+}
+
+Chirper.prototype[$$asyncIterator] = function () {
+  return {
+    to: this.to,
+    num: 0,
+    next () {
+      return new Promise(function (resolve) {
+        if (this.num >= this.to) {
+          resolve({ value: undefined, done: true })
+        } else {
+          setTimeout(function () {
+            resolve({ value: this.num++, done: false })
+          }, 1000)
+        }
+      }
+    }
+  }
+}
+
+var chirper = new Chirper(3)
+for await (var number of chirper) {
+  console.log(number) // 0 ...wait... 1 ...wait... 2
+}
+```
+
+### isAsyncIterable
+
+Returns true if the provided object implements the AsyncIterator protocol via
+either implementing a `Symbol.asyncIterator` or `"@@asyncIterator"` method.
+
+**Parameters**
+
+-   `obj`  A value which might implement the AsyncIterable protocol.
+
+**Examples**
+
+```javascript
+var isAsyncIterable = require('iterall').isAsyncIterable
+isAsyncIterable(myStream) // true
+isAsyncIterable('ABC') // false
+```
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if AsyncIterable.
+
+### getAsyncIterator
+
+If the provided object implements the AsyncIterator protocol, its
+AsyncIterator object is returned. Otherwise returns undefined.
+
+**Parameters**
+
+-   `asyncIterable` **AsyncIterable&lt;T>** An AsyncIterable object which is the source of an AsyncIterator.
+
+**Examples**
+
+```javascript
+var getAsyncIterator = require('iterall').getAsyncIterator
+var asyncIterator = getAsyncIterator(myStream)
+asyncIterator.next().then(console.log) // { value: 1, done: false }
+asyncIterator.next().then(console.log) // { value: 2, done: false }
+asyncIterator.next().then(console.log) // { value: 3, done: false }
+asyncIterator.next().then(console.log) // { value: undefined, done: true }
+```
+
+Returns **AsyncIterator&lt;T>** new AsyncIterator instance.
+
+### getAsyncIteratorMethod
+
+If the provided object implements the AsyncIterator protocol, the method
+responsible for producing its AsyncIterator object is returned.
+
+This is used in rare cases for performance tuning. This method must be called
+with obj as the contextual this-argument.
+
+**Parameters**
+
+-   `asyncIterable` **AsyncIterable&lt;T>** An AsyncIterable object which defines an `@@asyncIterator` method.
+
+**Examples**
+
+```javascript
+var getAsyncIteratorMethod = require('iterall').getAsyncIteratorMethod
+var method = getAsyncIteratorMethod(myStream)
+if (method) {
+  var asyncIterator = method.call(myStream)
+}
+```
+
+Returns **function (): AsyncIterator&lt;T>** `@@asyncIterator` method.
+
+### createAsyncIterator
+
+Similar to `getAsyncIterator()`, this method returns a new AsyncIterator
+given an AsyncIterable. However it will also create an AsyncIterator for a
+non-async Iterable as well as non-Iterable Array-like collection, such as
+Array in a pre-ES2015 environment.
+
+`createAsyncIterator` is complimentary to `forAwaitEach`, but allows a
+buffering "pull"-based iteration as opposed to `forAwaitEach`'s
+"push"-based iteration.
+
+`createAsyncIterator` produces an AsyncIterator for non-async Iterables as
+described in the ECMAScript proposal [Async-from-Sync Iterator Objects](https://tc39.github.io/proposal-async-iteration/#sec-async-from-sync-iterator-objects).
+
+> Note: Creating `AsyncIterator`s requires the existence of `Promise`.
+> While `Promise` has been available in modern browsers for a number of
+> years, legacy browsers (like IE 11) may require a polyfill.
+
+**Parameters**
+
+-   `source` **(AsyncIterable&lt;T> | Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** An AsyncIterable, Iterable, or Array-like object to produce an Iterator.
+
+**Examples**
+
+```javascript
+var createAsyncIterator = require('iterall').createAsyncIterator
+
+var myArraylike = { length: 3, 0: 'Alpha', 1: 'Bravo', 2: 'Charlie' }
+var iterator = createAsyncIterator(myArraylike)
+iterator.next().then(console.log) // { value: 'Alpha', done: false }
+iterator.next().then(console.log) // { value: 'Bravo', done: false }
+iterator.next().then(console.log) // { value: 'Charlie', done: false }
+iterator.next().then(console.log) // { value: undefined, done: true }
+```
+
+Returns **AsyncIterator&lt;T>** new AsyncIterator instance.
+
+### forAwaitEach
+
+Given an object which either implements the AsyncIterable protocol or is
+Array-like, iterate over it, calling the `callback` at each iteration.
+
+Use `forAwaitEach` where you would expect to use a `for-await-of` loop.
+
+Similar to [Array#forEach][], the `callback` function accepts three
+arguments, and is provided with `thisArg` as the calling context.
+
+> Note: Using `forAwaitEach` requires the existence of `Promise`.
+> While `Promise` has been available in modern browsers for a number of
+> years, legacy browsers (like IE 11) may require a polyfill.
+
+**Parameters**
+
+-   `collection` **(AsyncIterable&lt;T> | Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** The AsyncIterable or array to iterate over.
+-   `source`  
+-   `callback` **function (T, [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Function to execute for each iteration, taking up to three arguments
+-   `thisArg`  Optional. Value to use as `this` when executing `callback`.
+
+**Examples**
+
+```javascript
+var forAwaitEach = require('iterall').forAwaitEach
+
+forAwaitEach(myIterable, function (value, index, iterable) {
+  console.log(value, index, iterable === myIterable)
+})
+```
+
+```javascript
+// ES2017:
+for await (let value of myAsyncIterable) {
+  console.log(await doSomethingAsync(value))
+}
+console.log('done')
+
+// Any JavaScript environment:
+forAwaitEach(myAsyncIterable, function (value) {
+  return doSomethingAsync(value).then(console.log)
+}).then(function () {
+  console.log('done')
+})
+```
+
 ## Contributing
 
 Contributions are welcome and encouraged!
@@ -469,6 +707,8 @@ these.
 [isarray]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
 
 [iterators]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
+
+[asynciterators]: https://tc39.github.io/proposal-async-iteration/
 
 [linked list]: https://en.wikipedia.org/wiki/Linked_list
 

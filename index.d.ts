@@ -25,7 +25,7 @@ export function getIterator(iterable: any): void | Iterator<any>
 export function getIteratorMethod<TValue>(
   iterable: Iterable<TValue>
 ): () => Iterator<TValue>
-export function getIteratorMethod(iterable: any): () => Iterator<any> | void
+export function getIteratorMethod(iterable: any): void | (() => Iterator<any>)
 
 export function forEach<TValue, TCollection extends Iterable<TValue>>(
   collection: TCollection,
@@ -43,3 +43,43 @@ export function createIterator<TValue>(
 ): Iterator<TValue>
 export function createIterator(collection: { length: number }): Iterator<any>
 export function createIterator(collection: any): void | Iterator<any>
+
+export var $$asyncIterator: symbol | string
+
+export function isAsyncIterable(obj: any): boolean
+
+export function getAsyncIterator(
+  asyncIterable: any
+): void | AsyncIterator<mixed>
+
+export function getAsyncIteratorMethod<TValue>(
+  asyncIterable: AsyncIterable<TValue>
+): () => AsyncIterator<TValue>
+export function getAsyncIteratorMethod(
+  asyncIterable: any
+): void | (() => AsyncIterator<mixed>)
+
+export function createAsyncIterator<TValue>(
+  collection: AsyncIterable<TValue> | Iterable<Promise<TValue>> | Iterable<TValue>
+): AsyncIterator<TValue>
+export function createAsyncIterator(
+  collection: {length: number}
+): AsyncIterator<mixed>
+export function createAsyncIterator(
+  collection: any
+): void | AsyncIterator<mixed>
+
+export function forAwaitEach<TValue, TCollection extends AsyncIterable<TValue> | Iterable<Promise<TValue>> | Iterable<TValue>>(
+  collection: TCollection,
+  callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+  thisArg?: any
+): Promise<void>
+export function forAwaitEach<TCollection extends { length: number }>(
+  collection: TCollection,
+  callbackFn: (
+    value: mixed,
+    index: number,
+    collection: TCollection
+  ) => Promise<any>,
+  thisArg?: any
+): Promise<void>
