@@ -12,9 +12,6 @@
 // Iterable, Iterator, AsyncIterable, and AsyncIterator so they are not
 // defined here.
 
-// Note: Flow type definitions are stricter than Typescript's due to lacking
-// non-exhaustive function overriding.
-
 declare export var $$iterator: '@@iterator'
 
 declare export function isIterable(obj: any): boolean
@@ -26,17 +23,23 @@ declare export function isCollection(obj: any): boolean
 declare export function getIterator<TValue>(
   iterable: Iterable<TValue>
 ): Iterator<TValue>
+declare export function getIterator(iterable: mixed): void | Iterator<mixed>
 
 declare export function getIteratorMethod<TValue>(
   iterable: Iterable<TValue>
 ): () => Iterator<TValue>
-
+declare export function getIteratorMethod(
+  iterable: mixed
+): void | (() => Iterator<mixed>)
 declare export function createIterator<TValue>(
   collection: Iterable<TValue>
 ): Iterator<TValue>
 declare export function createIterator(collection: {
   length: number
 }): Iterator<mixed>
+declare export function createIterator(
+  collection: mixed
+): void | Iterator<mixed>
 
 declare export function forEach<TValue, TCollection: Iterable<TValue>>(
   collection: TCollection,
@@ -56,11 +59,16 @@ declare export function isAsyncIterable(obj: any): boolean
 declare export function getAsyncIterator<TValue>(
   asyncIterable: AsyncIterable<TValue>
 ): AsyncIterator<TValue>
+declare export function getAsyncIterator(
+  asyncIterable: mixed
+): void | AsyncIterator<mixed>
 
 declare export function getAsyncIteratorMethod<TValue>(
   asyncIterable: AsyncIterable<TValue>
 ): () => AsyncIterator<TValue>
-
+declare export function getAsyncIteratorMethod(
+  asyncIterable: AsyncIterable<mixed>
+): void | (() => AsyncIterator<mixed>)
 declare export function createAsyncIterator<TValue>(
   collection:
     | AsyncIterable<TValue>
@@ -70,6 +78,9 @@ declare export function createAsyncIterator<TValue>(
 declare export function createAsyncIterator(collection: {
   length: number
 }): AsyncIterator<mixed>
+declare export function createAsyncIterator(
+  collection: mixed
+): void | AsyncIterator<mixed>
 
 declare export function forAwaitEach<
   TValue,
