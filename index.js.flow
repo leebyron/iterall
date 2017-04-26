@@ -20,83 +20,71 @@ declare export function isArrayLike(obj: any): boolean
 
 declare export function isCollection(obj: any): boolean
 
-declare export function getIterator<TValue>(
-  iterable: Iterable<TValue>
-): Iterator<TValue>
-declare export function getIterator(iterable: mixed): void | Iterator<mixed>
+declare export var getIterator: (<TValue>(
+  Iterable<TValue>
+) => Iterator<TValue>) &
+  ((mixed) => void | Iterator<mixed>)
 
-declare export function getIteratorMethod<TValue>(
-  iterable: Iterable<TValue>
-): () => Iterator<TValue>
-declare export function getIteratorMethod(
-  iterable: mixed
-): void | (() => Iterator<mixed>)
-declare export function createIterator<TValue>(
-  collection: Iterable<TValue>
-): Iterator<TValue>
-declare export function createIterator(collection: {
-  length: number
-}): Iterator<mixed>
-declare export function createIterator(
-  collection: mixed
-): void | Iterator<mixed>
+declare export var getIteratorMethod: (<TValue>(
+  Iterable<TValue>
+) => () => Iterator<TValue>) &
+  ((mixed) => void | (() => Iterator<mixed>))
 
-declare export function forEach<TValue, TCollection: Iterable<TValue>>(
+declare export var createIterator: (<TValue>(
+  Iterable<TValue>
+) => Iterator<TValue>) &
+  (({ length: number }) => Iterator<mixed>) &
+  ((mixed) => void | Iterator<mixed>)
+
+declare type Callback<TValue, TCollection> = (
+  value: TValue,
+  index: number,
+  collection: TCollection
+) => any
+
+declare export var forEach: (<TValue, TCollection: Iterable<TValue>>(
   collection: TCollection,
-  callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+  callbackFn: Callback<TValue, TCollection>,
   thisArg?: any
-): void
-declare export function forEach<TCollection: { length: number }>(
-  collection: TCollection,
-  callbackFn: (value: mixed, index: number, collection: TCollection) => any,
-  thisArg?: any
-): void
+) => void) &
+  (<TCollection: { length: number }>(
+    collection: TCollection,
+    callbackFn: Callback<mixed, TCollection>,
+    thisArg?: any
+  ) => void)
 
 declare export var $$asyncIterator: '@@asyncIterator'
 
 declare export function isAsyncIterable(obj: any): boolean
 
-declare export function getAsyncIterator<TValue>(
-  asyncIterable: AsyncIterable<TValue>
-): AsyncIterator<TValue>
-declare export function getAsyncIterator(
-  asyncIterable: mixed
-): void | AsyncIterator<mixed>
+declare export var getAsyncIterator: (<TValue>(
+  AsyncIterable<TValue>
+) => AsyncIterator<TValue>) &
+  ((mixed) => void | AsyncIterator<mixed>)
 
-declare export function getAsyncIteratorMethod<TValue>(
-  asyncIterable: AsyncIterable<TValue>
-): () => AsyncIterator<TValue>
-declare export function getAsyncIteratorMethod(
-  asyncIterable: AsyncIterable<mixed>
-): void | (() => AsyncIterator<mixed>)
-declare export function createAsyncIterator<TValue>(
-  collection: AsyncIterable<TValue> | Iterable<Promise<TValue> | TValue>
-): AsyncIterator<TValue>
-declare export function createAsyncIterator(collection: {
-  length: number
-}): AsyncIterator<mixed>
-declare export function createAsyncIterator(
-  collection: mixed
-): void | AsyncIterator<mixed>
+declare export var getAsyncIteratorMethod: (<TValue>(
+  AsyncIterable<TValue>
+) => () => AsyncIterator<TValue>) &
+  ((mixed) => void | (() => AsyncIterator<mixed>))
 
-declare export function forAwaitEach<
-  TValue,
-  TCollection: AsyncIterable<TValue>
->(
+declare export var createAsyncIterator: (<TValue>(
+  AsyncIterable<TValue> | Iterable<Promise<TValue> | TValue>
+) => AsyncIterator<TValue>) &
+  (({ length: number }) => AsyncIterator<mixed>) &
+  ((mixed) => void | AsyncIterator<mixed>)
+
+declare export var forAwaitEach: (<TValue, TCollection: AsyncIterable<TValue>>(
   collection: TCollection,
-  callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+  callbackFn: Callback<TValue, TCollection>,
   thisArg?: any
-): Promise<void>
-declare export function forAwaitEach<
-  TValue,
-  TCollection: Iterable<Promise<TValue> | TValue>
->(
-  collection: TCollection,
-  callbackFn: (value: TValue, index: number, collection: TCollection) => any,
-  thisArg?: any
-): Promise<void>
-declare export function forAwaitEach<TCollection: { length: number }>(
-  collection: TCollection,
-  callbackFn: (value: mixed, index: number, collection: TCollection) => any,
-  thisArg?: any
-): Promise<void>
+) => Promise<void>) &
+  (<TValue, TCollection: Iterable<Promise<TValue> | TValue>>(
+    collection: TCollection,
+    callbackFn: Callback<TValue, TCollection>,
+    thisArg?: any
+  ) => Promise<void>) &
+  (<TCollection: { length: number }>(
+    collection: TCollection,
+    callbackFn: Callback<mixed, TCollection>,
+    thisArg?: any
+  ) => Promise<void>)
