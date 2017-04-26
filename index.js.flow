@@ -48,3 +48,51 @@ declare export function createIterator(collection: {
   length: number
 }): Iterator<mixed>
 declare export function createIterator(collection: any): void | Iterator<mixed>
+
+declare export var $$asyncIterator: Symbol | string
+
+declare export function isAsyncIterable(obj: any): boolean
+
+declare export function getAsyncIterator(
+  asyncIterable: any
+): void | AsyncIterator<mixed>
+
+declare export function getAsyncIteratorMethod<TValue>(
+  asyncIterable: AsyncIterable<TValue>
+): () => AsyncIterator<TValue>
+declare export function getAsyncIteratorMethod(
+  asyncIterable: any
+): void | (() => AsyncIterator<mixed>)
+declare export function createAsyncIterator<TValue>(
+  collection:
+    | AsyncIterable<TValue>
+    | Iterable<Promise<TValue>>
+    | Iterable<TValue>
+): AsyncIterator<TValue>
+declare export function createAsyncIterator(collection: {
+  length: number
+}): AsyncIterator<mixed>
+declare export function createAsyncIterator(
+  collection: any
+): void | AsyncIterator<mixed>
+
+declare export function forAwaitEach<
+  TValue,
+  TCollection:
+    | AsyncIterable<TValue>
+    | Iterable<Promise<TValue>>
+    | Iterable<TValue>
+>(
+  collection: TCollection,
+  callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+  thisArg?: any
+): Promise<void>
+declare export function forAwaitEach<TCollection: { length: number }>(
+  collection: TCollection,
+  callbackFn: (
+    value: mixed,
+    index: number,
+    collection: TCollection
+  ) => Promise<any>,
+  thisArg?: any
+): Promise<void>

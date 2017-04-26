@@ -358,3 +358,299 @@ ArrayLikeIterator.prototype.next = function() {
   }
   return { value: this._o[this._i++], done: false }
 }
+
+////////////////////////////////////////////////
+//                                            //
+//            ASYNC ITERATORS                 //
+//                                            //
+////////////////////////////////////////////////
+
+/**
+ * [AsyncIterator](https://tc39.github.io/proposal-async-iteration/)
+ * is a *protocol* which describes a standard way to produce and consume an
+ * asynchronous sequence of values, typically the values of the AsyncIterable
+ * represented by this AsyncIterator.
+ *
+ * AsyncIterator is similar to Observable or Stream.
+ *
+ * While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
+ * it can be utilized by any version of JavaScript.
+ *
+ * @typedef {Object} AsyncIterator
+ * @template T The type of each iterated value
+ * @property {function (): Promise<{ value: T, done: boolean }>} next
+ *   A method which produces a Promise which resolves to either the next value
+ *   in a sequence or a result where the `done` property is `true` indicating
+ *   the end of the sequence of values. It may also produce a Promise which
+ *   becomes rejected, indicating a failure.
+ */
+
+/**
+ * AsyncIterable is a *protocol* which when implemented allows a JavaScript
+ * object to define their asynchronous iteration behavior, such as what values
+ * are looped over in a `for-await-of` loop or `iterall`'s `forAwaitEach`
+ * function.
+ *
+ * While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
+ * it can be utilized by any version of JavaScript.
+ *
+ * @typedef {Object} AsyncIterable
+ * @template T The type of each iterated value
+ * @property {function (): AsyncIterator<T>} Symbol.asyncIterator
+ *   A method which produces an AsyncIterator for this AsyncIterable.
+ */
+
+// In ES2017 (or a polyfilled) environment, this will be Symbol.asyncIterator
+var SYMBOL_ASYNC_ITERATOR = typeof Symbol === 'function' && Symbol.asyncIterator
+
+/**
+ * A property name to be used as the name of an AsyncIterable's method
+ * responsible for producing an Iterator, referred to as `@@asyncIterator`.
+ * Typically represents the value `Symbol.asyncIterator` but falls back to the
+ * string `"@@asyncIterator"` when `Symbol.asyncIterator` is not defined.
+ *
+ * Use `$$asyncIterator` for defining new AsyncIterables instead of
+ * `Symbol.asyncIterator`, but do not use it for accessing existing Iterables,
+ * instead use `getAsyncIterator()` or `isAsyncIterable()`.
+ *
+ * @example
+ *
+ * var $$asyncIterator = require('iterall').$$asyncIterator
+ *
+ * function Chirper (to) {
+ *   this.to = to
+ * }
+ *
+ * Chirper.prototype[$$asyncIterator] = function () {
+ *   return {
+ *     to: this.to,
+ *     num: 0,
+ *     next () {
+ *       return new Promise(function (resolve) {
+ *         if (this.num >= this.to) {
+ *           resolve({ value: undefined, done: true })
+ *         } else {
+ *           setTimeout(function () {
+ *             resolve({ value: this.num++, done: false })
+ *           }, 1000)
+ *         }
+ *       }
+ *     }
+ *   }
+ * }
+ *
+ * var chirper = new Chirper(3)
+ * for await (var number of chirper) {
+ *   console.log(number) // 0 ...wait... 1 ...wait... 2
+ * }
+ *
+ * @type {Symbol|string}
+ */
+var $$asyncIterator = SYMBOL_ASYNC_ITERATOR || '@@asyncIterator'
+exports.$$asyncIterator = $$asyncIterator
+
+/**
+ * Returns true if the provided object implements the AsyncIterator protocol via
+ * either implementing a `Symbol.asyncIterator` or `"@@asyncIterator"` method.
+ *
+ * @example
+ *
+ * var isAsyncIterable = require('iterall').isAsyncIterable
+ * isAsyncIterable(myStream) // true
+ * isAsyncIterable('ABC') // false
+ *
+ * @param obj
+ *   A value which might implement the AsyncIterable protocol.
+ * @return {boolean} true if AsyncIterable.
+ */
+function isAsyncIterable(obj) {
+  return !!getAsyncIteratorMethod(obj)
+}
+exports.isAsyncIterable = isAsyncIterable
+
+/**
+ * If the provided object implements the AsyncIterator protocol, its
+ * AsyncIterator object is returned. Otherwise returns undefined.
+ *
+ * @example
+ *
+ * var getAsyncIterator = require('iterall').getAsyncIterator
+ * var asyncIterator = getAsyncIterator(myStream)
+ * asyncIterator.next().then(console.log) // { value: 1, done: false }
+ * asyncIterator.next().then(console.log) // { value: 2, done: false }
+ * asyncIterator.next().then(console.log) // { value: 3, done: false }
+ * asyncIterator.next().then(console.log) // { value: undefined, done: true }
+ *
+ * @template T the type of each iterated value
+ * @param {AsyncIterable<T>} asyncIterable
+ *   An AsyncIterable object which is the source of an AsyncIterator.
+ * @return {AsyncIterator<T>} new AsyncIterator instance.
+ */
+function getAsyncIterator(asyncIterable) {
+  var method = getAsyncIteratorMethod(asyncIterable)
+  if (method) {
+    return method.call(asyncIterable)
+  }
+}
+exports.getAsyncIterator = getAsyncIterator
+
+/**
+ * If the provided object implements the AsyncIterator protocol, the method
+ * responsible for producing its AsyncIterator object is returned.
+ *
+ * This is used in rare cases for performance tuning. This method must be called
+ * with obj as the contextual this-argument.
+ *
+ * @example
+ *
+ * var getAsyncIteratorMethod = require('iterall').getAsyncIteratorMethod
+ * var method = getAsyncIteratorMethod(myStream)
+ * if (method) {
+ *   var asyncIterator = method.call(myStream)
+ * }
+ *
+ * @template T the type of each iterated value
+ * @param {AsyncIterable<T>} asyncIterable
+ *   An AsyncIterable object which defines an `@@asyncIterator` method.
+ * @return {function(): AsyncIterator<T>} `@@asyncIterator` method.
+ */
+function getAsyncIteratorMethod(asyncIterable) {
+  if (asyncIterable != null) {
+    var method =
+      (SYMBOL_ASYNC_ITERATOR && asyncIterable[SYMBOL_ASYNC_ITERATOR]) ||
+      asyncIterable['@@asyncIterator']
+    if (typeof method === 'function') {
+      return method
+    }
+  }
+}
+exports.getAsyncIteratorMethod = getAsyncIteratorMethod
+
+/**
+ * Similar to `getAsyncIterator()`, this method returns a new AsyncIterator
+ * given an AsyncIterable. However it will also create an AsyncIterator for a
+ * non-async Iterable as well as non-Iterable Array-like collection, such as
+ * Array in a pre-ES2015 environment.
+ *
+ * `createAsyncIterator` is complimentary to `forAwaitEach`, but allows a
+ * buffering "pull"-based iteration as opposed to `forAwaitEach`'s
+ * "push"-based iteration.
+ *
+ * `createAsyncIterator` produces an AsyncIterator for non-async Iterables as
+ * described in the ECMAScript proposal [Async-from-Sync Iterator Objects](https://tc39.github.io/proposal-async-iteration/#sec-async-from-sync-iterator-objects).
+ *
+ * > Note: Creating `AsyncIterator`s requires the existence of `Promise`.
+ * > While `Promise` has been available in modern browsers for a number of
+ * > years, legacy browsers (like IE 11) may require a polyfill.
+ *
+ * @example
+ *
+ * var createAsyncIterator = require('iterall').createAsyncIterator
+ *
+ * var myArraylike = { length: 3, 0: 'Alpha', 1: 'Bravo', 2: 'Charlie' }
+ * var iterator = createAsyncIterator(myArraylike)
+ * iterator.next().then(console.log) // { value: 'Alpha', done: false }
+ * iterator.next().then(console.log) // { value: 'Bravo', done: false }
+ * iterator.next().then(console.log) // { value: 'Charlie', done: false }
+ * iterator.next().then(console.log) // { value: undefined, done: true }
+ *
+ * @template T the type of each iterated value
+ * @param {AsyncIterable<T>|Iterable<T>|{ length: number }} source
+ *   An AsyncIterable, Iterable, or Array-like object to produce an Iterator.
+ * @return {AsyncIterator<T>} new AsyncIterator instance.
+ */
+function createAsyncIterator(source) {
+  if (source != null) {
+    var asyncIterator = getAsyncIterator(source)
+    if (asyncIterator) {
+      return asyncIterator
+    }
+    var iterator = createIterator(source)
+    if (iterator) {
+      return new AsyncFromSyncIterator(iterator)
+    }
+  }
+}
+exports.createAsyncIterator = createAsyncIterator
+
+// When the object provided to `createAsyncIterator` is not AsyncIterable but is
+// sync Iterable, this simple wrapper is created.
+function AsyncFromSyncIterator(iterator) {
+  this._i = iterator
+}
+
+// Note: all AsyncIterators are themselves AsyncIterable.
+AsyncFromSyncIterator.prototype[$$asyncIterator] = function() {
+  return this
+}
+
+// A simple state-machine determines the IteratorResult returned, yielding
+// each value in the Array-like object in order of their indicies.
+AsyncFromSyncIterator.prototype.next = function() {
+  var step = this._i.next()
+  return Promise.resolve(step.value).then(function(value) {
+    return { value: value, done: step.done }
+  })
+}
+
+/**
+ * Given an object which either implements the AsyncIterable protocol or is
+ * Array-like, iterate over it, calling the `callback` at each iteration.
+ *
+ * Use `forAwaitEach` where you would expect to use a `for-await-of` loop.
+ *
+ * Similar to [Array#forEach][], the `callback` function accepts three
+ * arguments, and is provided with `thisArg` as the calling context.
+ *
+ * > Note: Using `forAwaitEach` requires the existence of `Promise`.
+ * > While `Promise` has been available in modern browsers for a number of
+ * > years, legacy browsers (like IE 11) may require a polyfill.
+ *
+ * @example
+ *
+ * var forAwaitEach = require('iterall').forAwaitEach
+ *
+ * forAwaitEach(myIterable, function (value, index, iterable) {
+ *   console.log(value, index, iterable === myIterable)
+ * })
+ *
+ * @example
+ *
+ * // ES2017:
+ * for await (let value of myAsyncIterable) {
+ *   console.log(await doSomethingAsync(value))
+ * }
+ * console.log('done')
+ *
+ * // Any JavaScript environment:
+ * forAwaitEach(myAsyncIterable, function (value) {
+ *   return doSomethingAsync(value).then(console.log)
+ * }).then(function () {
+ *   console.log('done')
+ * })
+ *
+ * @template T the type of each iterated value
+ * @param {AsyncIterable<T>|Iterable<T>|{ length: number }} collection
+ *   The AsyncIterable or array to iterate over.
+ * @param {function(T, number, object)} callback
+ *   Function to execute for each iteration, taking up to three arguments
+ * @param [thisArg]
+ *   Optional. Value to use as `this` when executing `callback`.
+ */
+function forAwaitEach(source, callback, thisArg) {
+  var asyncIterator = createAsyncIterator(source)
+  if (asyncIterator) {
+    var i = 0
+    function next() {
+      return asyncIterator.next().then(function(step) {
+        if (!step.done) {
+          return Promise.resolve(
+            callback.call(thisArg, step.value, i++, source)
+          ).then(next)
+        }
+      })
+    }
+    return next()
+  }
+}
+exports.forAwaitEach = forAwaitEach
