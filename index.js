@@ -630,7 +630,7 @@ AsyncFromSyncIterator.prototype.next = function() {
  * })
  *
  * @template T the type of each iterated value
- * @param {AsyncIterable<T>|Iterable<T>|{ length: number }} collection
+ * @param {AsyncIterable<T>|Iterable<Promise<T> | T>|{ length: number }} source
  *   The AsyncIterable or array to iterate over.
  * @param {function(T, number, object)} callback
  *   Function to execute for each iteration, taking up to three arguments

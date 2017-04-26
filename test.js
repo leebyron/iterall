@@ -1041,6 +1041,22 @@ test('forAwaitEach iterates over Array', async () => {
   ])
 })
 
+test('forAwaitEach iterates over Array of Promises', async () => {
+  var spy = createSpy()
+  var myArray = [
+    Promise.resolve('Alpha'),
+    Promise.resolve('Bravo'),
+    Promise.resolve('Charlie')
+  ]
+  // $FlowFixMe expected function override to apply.
+  await forAwaitEach(myArray, spy, spy)
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myArray]],
+    [spy, ['Bravo', 1, myArray]],
+    [spy, ['Charlie', 2, myArray]]
+  ])
+})
+
 test('forAwaitEach iterates over Array-like', async () => {
   var spy = createSpy()
   var myArrayLike = arrayLike()
