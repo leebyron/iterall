@@ -50,6 +50,9 @@ test('$$iterator can be used to create new iterables', () => {
           return { value: undefined, done: true }
         }
         return { value: this.num++, done: false }
+      },
+      [$$iterator]() {
+        return this
       }
     }
   }
@@ -104,9 +107,9 @@ function argumentsObject() {
 function arrayLike() {
   return {
     length: 3,
-    0: 'Alpha',
-    1: 'Bravo',
-    2: 'Charlie'
+    '0': 'Alpha',
+    '1': 'Bravo',
+    '2': 'Charlie'
   }
 }
 
@@ -127,6 +130,9 @@ function iterSampleFib() {
             return { value: x, done: false }
           }
           return { value: undefined, done: true }
+        },
+        [$$iterator]() {
+          return this
         }
       }
       return iter
@@ -154,6 +160,7 @@ test('isIterable true for Generator', () => {
 
 function badIterable() {
   return {
+    // $FlowExpectError
     [$$iterator]: {
       next: function() {
         return { value: 'value', done: false }
@@ -310,24 +317,37 @@ test('getIterator provides Iterator for empty String', () => {
 })
 
 test('getIterator undefined for Number', () =>
+  // $FlowExpectError
   getIterator(1) === undefined &&
+  // $FlowExpectError
   getIterator(0) === undefined &&
+  // $FlowExpectError
   getIterator(new Number(123)) === undefined && // eslint-disable-line no-new-wrappers
+  // $FlowExpectError
   getIterator(NaN) === undefined)
 
 test('getIterator undefined for Boolean', () =>
+  // $FlowExpectError
   getIterator(true) === undefined &&
+  // $FlowExpectError
   getIterator(false) === undefined &&
+  // $FlowExpectError
   getIterator(new Boolean(true)) === undefined) // eslint-disable-line no-new-wrappers
 
-test('getIterator undefined for null', () => getIterator(null) === undefined)
+test('getIterator undefined for null', () =>
+  // $FlowExpectError
+  getIterator(null) === undefined)
 
 test('getIterator undefined for undefined', () =>
+  // $FlowExpectError
   getIterator(undefined) === undefined)
 
 test('getIterator undefined for non-iterable Object', () =>
+  // $FlowExpectError
   getIterator({}) === undefined &&
+  // $FlowExpectError
   getIterator({ iterable: true }) === undefined &&
+  // $FlowExpectError
   getIterator(arrayLike()) === undefined)
 
 test('getIterator provides Iterator for iterable Object', () => {
@@ -350,6 +370,9 @@ function oldStyleIterable() {
       return {
         next() {
           return { value: Infinity, done: false }
+        },
+        '@@iterator'() {
+          return this
         }
       }
     }
@@ -418,12 +441,14 @@ function createSpy(fn) {
 
 test('forEach does not iterate over null', () => {
   var spy = createSpy()
+  // $FlowExpectError
   forEach(null, spy, spy)
   assert.deepEqual(spy.calls, [])
 })
 
 test('forEach does not iterate over undefined', () => {
   var spy = createSpy()
+  // $FlowExpectError
   forEach(undefined, spy, spy)
   assert.deepEqual(spy.calls, [])
 })
@@ -477,6 +502,7 @@ test('forEach iterates over Iterator', () => {
 
 test('forEach does not iterate over incorrect Iterable', () => {
   var spy = createSpy()
+  // $FlowExpectError
   forEach(badIterable(), spy, spy)
   assert.deepEqual(spy.calls, [])
 })
@@ -535,7 +561,7 @@ test('forEach iterates over Array-like', () => {
 
 test('forEach iterates over holey Array-like', () => {
   var spy = createSpy()
-  var myArrayLike = { length: 5, 1: 'One', 3: 'Three' }
+  var myArrayLike = { length: 5, '1': 'One', '3': 'Three' }
   forEach(myArrayLike, spy, spy)
   assert.deepEqual(spy.calls, [
     [spy, ['One', 1, myArrayLike]],
@@ -548,9 +574,11 @@ test('forEach iterates over holey Array-like', () => {
 var createIterator = require('./').createIterator
 
 test('createIterator returns undefined for null', () =>
+  // $FlowExpectError
   createIterator(null) === undefined)
 
 test('createIterator returns undefined for undefined', () =>
+  // $FlowExpectError
   createIterator(undefined) === undefined)
 
 test('createIterator creates Iterator for string literal', () => {
@@ -596,6 +624,7 @@ test('createIterator creates Iterator for Iterator', () => {
 })
 
 test('createIterator returns undefined for incorrect Iterable', () =>
+  // $FlowExpectError
   createIterator(badIterable()) === undefined)
 
 test('createIterator creates Iterator for custom Iterable', () => {
@@ -647,7 +676,7 @@ test('createIterator creates Iterator for Array-like', () => {
 })
 
 test('createIterator creates Iterator for holey Array-like', () => {
-  var iterator = createIterator({ length: 5, 1: 'One', 3: 'Three' })
+  var iterator = createIterator({ length: 5, '1': 'One', '3': 'Three' })
   assert(iterator)
   assert.deepEqual(iterator.next(), { value: undefined, done: false })
   assert.deepEqual(iterator.next(), { value: 'One', done: false })
@@ -767,23 +796,33 @@ test('getAsyncIterator provides AsyncIterator for AsyncIterable', () => {
 })
 
 test('getAsyncIterator provides undefined for Array', () =>
+  // $FlowExpectError
   getAsyncIterator(['Alpha', 'Bravo', 'Charlie']) === undefined &&
+  // $FlowExpectError
   getAsyncIterator([]) === undefined)
 
 test('getAsyncIterator provides undefined for String', () =>
+  // $FlowExpectError
   getAsyncIterator('A') === undefined &&
+  // $FlowExpectError
   getAsyncIterator('0') === undefined &&
+  // $FlowExpectError
   getAsyncIterator(new String('ABC')) === undefined && // eslint-disable-line no-new-wrappers
+  // $FlowExpectError
   getAsyncIterator('') === undefined)
 
 test('getAsyncIterator undefined for null', () =>
+  // $FlowExpectError
   getAsyncIterator(null) === undefined)
 
 test('getAsyncIterator undefined for undefined', () =>
+  // $FlowExpectError
   getAsyncIterator(undefined) === undefined)
 
 test('getAsyncIterator provides undefined for Iterable and Generator', () =>
+  // $FlowExpectError
   getAsyncIterator(iterSampleFib()) === undefined &&
+  // $FlowExpectError
   getAsyncIterator(genSampleFib()) === undefined)
 
 function nonSymbolAsyncIterable() {
@@ -792,6 +831,9 @@ function nonSymbolAsyncIterable() {
       return {
         next() {
           return Promise.resolve({ value: Infinity, done: false })
+        },
+        '@@asyncIterator'() {
+          return this
         }
       }
     }
@@ -826,6 +868,7 @@ test('getAsyncIteratorMethod provides function for AsyncIterable', () => {
 })
 
 test('getAsyncIteratorMethod provides undefined for Generator', () =>
+  // $FlowExpectError
   getAsyncIteratorMethod(genSampleFib()) === undefined)
 
 // createIterator
@@ -833,9 +876,11 @@ test('getAsyncIteratorMethod provides undefined for Generator', () =>
 var createAsyncIterator = require('./').createAsyncIterator
 
 test('createAsyncIterator returns undefined for null', () =>
+  // $FlowExpectError
   createAsyncIterator(null) === undefined)
 
 test('createAsyncIterator returns undefined for undefined', () =>
+  // $FlowExpectError
   createAsyncIterator(undefined) === undefined)
 
 test('createAsyncIterator creates AsyncIterator from AsyncIterable', async () => {
@@ -855,6 +900,7 @@ test('createAsyncIterator creates AsyncIterator from another AsyncIterator', () 
 })
 
 test('createAsyncIterator creates AsyncIterator for string literal', () => {
+  // $FlowFixMe expected function override to apply.
   var iterator = createAsyncIterator('ABC')
   assert(iterator)
   return Promise.all([
@@ -877,6 +923,7 @@ test('createAsyncIterator creates AsyncIterator for string literal', () => {
 })
 
 test('createAsyncIterator creates Iterator for Array', () => {
+  // $FlowFixMe expected function override to apply.
   var iterator = createAsyncIterator(['Alpha', 'Bravo', 'Charlie'])
   assert(iterator)
   return Promise.all([
@@ -899,6 +946,7 @@ test('createAsyncIterator creates Iterator for Array', () => {
 })
 
 test('createAsyncIterator creates Iterator for Iterator', () => {
+  // $FlowFixMe expected function override to apply.
   var myIterator = getIterator(['Alpha', 'Bravo', 'Charlie'])
   var iterator = createAsyncIterator(myIterator)
   assert(iterator)
@@ -970,12 +1018,14 @@ var forAwaitEach = require('./').forAwaitEach
 
 test('forAwaitEach does not iterate over null', async () => {
   var spy = createSpy()
+  // $FlowExpectError
   await forAwaitEach(null, spy, spy)
   assert.deepEqual(spy.calls, [])
 })
 
 test('forAwaitEach does not iterate over undefined', async () => {
   var spy = createSpy()
+  // $FlowExpectError
   await forAwaitEach(undefined, spy, spy)
   assert.deepEqual(spy.calls, [])
 })
@@ -983,6 +1033,7 @@ test('forAwaitEach does not iterate over undefined', async () => {
 test('forAwaitEach iterates over string literal', async () => {
   var spy = createSpy()
   var myStr = 'ABC'
+  // $FlowFixMe expected function override to apply.
   await forAwaitEach(myStr, spy, spy)
   assert.deepEqual(spy.calls, [
     [spy, ['A', 0, myStr]],
@@ -1000,6 +1051,7 @@ test('forAwaitEach iterates over string literal with an async callback', async (
     })
   })
   var myStr = 'ABC'
+  // $FlowFixMe expected function override to apply.
   await forAwaitEach(myStr, iterSpy, spy)
   assert.deepEqual(spy.calls, [
     [spy, ['A', 0, myStr]],
@@ -1014,6 +1066,7 @@ test('forAwaitEach iterates over string literal with an async callback', async (
 test('forAwaitEach iterates over Array', async () => {
   var spy = createSpy()
   var myArray = ['Alpha', 'Bravo', 'Charlie']
+  // $FlowFixMe expected function override to apply.
   await forAwaitEach(myArray, spy, spy)
   assert.deepEqual(spy.calls, [
     [spy, ['Alpha', 0, myArray]],
@@ -1036,6 +1089,7 @@ test('forAwaitEach iterates over Array-like', async () => {
 // Note: using regular functions in some of these tests as illustration
 test('forAwaitEach iterates over Iterator', () => {
   var spy = createSpy()
+  // $FlowFixMe expected function override to apply.
   var myArray = ['Alpha', 'Bravo', 'Charlie']
   var myIterator = getIterator(myArray)
   return forAwaitEach(myIterator, spy, spy).then(() =>
