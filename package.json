@@ -5,14 +5,15 @@
   "main": "index.js",
   "typings": "index.d.ts",
   "scripts": {
-    "test": "npm run lint && npm run testonly && npm run testdocs",
+    "test": "npm run lint && npm run flow && npm run testonly && npm run testdocs",
+    "flow": "flow check",
     "lint": "npm run prettier -- --write",
     "lint-check": "npm run prettier -- --list-different",
     "prettier": "prettier --single-quote --no-semi --parser flow '*.{js,flow}'",
     "testonly": "nyc --check-coverage --statements 100 node test.js",
     "testdocs": "if [ \"$(documentation readme -dgs API | grep -vF 'up to date')\" ]; then echo 'Must run: npm run docs'; exit 1; fi;",
     "docs": "documentation readme -gs API",
-    "travis": "npm run lint-check && npm run test && nyc report --reporter=text-lcov | coveralls"
+    "travis": "npm run lint-check && npm run flow && npm run test && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "coveralls": "2.13.0",
     "documentation": "4.0.0-beta5",
+    "flow-bin": "0.44.2",
     "nyc": "10.2.0",
     "prettier": "1.2.2"
   }
