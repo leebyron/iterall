@@ -1,6 +1,6 @@
 # JavaScript [Iterators][] and [AsyncIterators][] for all!
 
-[![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![568 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-606%20B-blue.svg)
+[![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![710 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-710%20B-blue.svg)
 
 `iterall` provides a few crucial utilities for implementing and working with
 [Iterables][iterators], [Async Iterables][asynciterators] and
@@ -33,6 +33,15 @@ if (isCollection(thing)) {
     console.log('Index: ' + i, item)
   })
 }
+
+// Accepts all AsyncIterators, in any JavaScript environment! ⏳
+var forAwaitEach = require('iterall').forAwaitEach
+
+forAwaitEach(thing, function (item, i) {
+  console.log('Index: ' + i, item)
+}).then(function () {
+  console.log('Done')
+})
 ```
 
 ## Why use Iterators?
@@ -643,8 +652,7 @@ arguments, and is provided with `thisArg` as the calling context.
 
 **Parameters**
 
--   `collection` **(AsyncIterable&lt;T> | Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** The AsyncIterable or array to iterate over.
--   `source`  
+-   `source` **(AsyncIterable&lt;T> | Iterable&lt;([Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;T> | T)> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** The AsyncIterable or array to iterate over.
 -   `callback` **function (T, [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number), [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object))** Function to execute for each iteration, taking up to three arguments
 -   `thisArg`  Optional. Value to use as `this` when executing `callback`.
 

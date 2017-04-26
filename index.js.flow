@@ -62,10 +62,7 @@ declare export function getAsyncIteratorMethod<TValue>(
 ): () => AsyncIterator<TValue>
 
 declare export function createAsyncIterator<TValue>(
-  collection:
-    | AsyncIterable<TValue>
-    | Iterable<Promise<TValue>>
-    | Iterable<TValue>
+  collection: AsyncIterable<TValue> | Iterable<Promise<TValue> | TValue>
 ): AsyncIterator<TValue>
 declare export function createAsyncIterator(collection: {
   length: number
@@ -81,13 +78,8 @@ declare export function forAwaitEach<
 ): Promise<void>
 declare export function forAwaitEach<
   TValue,
-  TCollection: Iterable<Promise<TValue>>
+  TCollection: Iterable<Promise<TValue> | TValue>
 >(
-  collection: TCollection,
-  callbackFn: (value: TValue, index: number, collection: TCollection) => any,
-  thisArg?: any
-): Promise<void>
-declare export function forAwaitEach<TValue, TCollection: Iterable<TValue>>(
   collection: TCollection,
   callbackFn: (value: TValue, index: number, collection: TCollection) => any,
   thisArg?: any
