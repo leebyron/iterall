@@ -370,6 +370,38 @@ if (method) {
 
 Returns **function (): Iterator&lt;T>** `@@iterator` method.
 
+### createIterator
+
+Similar to `getIterator()`, this method returns a new Iterator given an
+Iterable. However it will also create an Iterator for a non-Iterable
+Array-like collection, such as Array in a non-ES2015 environment.
+
+`createIterator` is complimentary to `forEach`, but allows a "pull"-based
+iteration as opposed to `forEach`'s "push"-based iteration.
+
+`createIterator` produces an Iterator for Array-likes with the same behavior
+as ArrayIteratorPrototype described in the ECMAScript specification, and
+does _not_ skip over "holes".
+
+**Parameters**
+
+-   `collection` **(Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** An Iterable or Array-like object to produce an Iterator.
+
+**Examples**
+
+```javascript
+var createIterator = require('iterall').createIterator
+
+var myArraylike = { length: 3, 0: 'Alpha', 1: 'Bravo', 2: 'Charlie' }
+var iterator = createIterator(myArraylike)
+iterator.next() // { value: 'Alpha', done: false }
+iterator.next() // { value: 'Bravo', done: false }
+iterator.next() // { value: 'Charlie', done: false }
+iterator.next() // { value: undefined, done: true }
+```
+
+Returns **Iterator&lt;T>** new Iterator instance.
+
 ### forEach
 
 Given an object which either implements the Iterable protocol or is
@@ -415,38 +447,6 @@ forEach(myIterable, function (value) {
   console.log(value)
 })
 ```
-
-### createIterator
-
-Similar to `getIterator()`, this method returns a new Iterator given an
-Iterable. However it will also create an Iterator for a non-Iterable
-Array-like collection, such as Array in a non-ES2015 environment.
-
-`createIterator` is complimentary to `forEach`, but allows a "pull"-based
-iteration as opposed to `forEach`'s "push"-based iteration.
-
-`createIterator` produces an Iterator for Array-likes with the same behavior
-as ArrayIteratorPrototype described in the ECMAScript specification, and
-does _not_ skip over "holes".
-
-**Parameters**
-
--   `collection` **(Iterable&lt;T> | {length: [number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)})** An Iterable or Array-like object to produce an Iterator.
-
-**Examples**
-
-```javascript
-var createIterator = require('iterall').createIterator
-
-var myArraylike = { length: 3, 0: 'Alpha', 1: 'Bravo', 2: 'Charlie' }
-var iterator = createIterator(myArraylike)
-iterator.next() // { value: 'Alpha', done: false }
-iterator.next() // { value: 'Bravo', done: false }
-iterator.next() // { value: 'Charlie', done: false }
-iterator.next() // { value: undefined, done: true }
-```
-
-Returns **Iterator&lt;T>** new Iterator instance.
 
 ### AsyncIterator
 
