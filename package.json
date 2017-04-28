@@ -13,7 +13,7 @@
     "testonly": "nyc --check-coverage --statements 100 node test.js",
     "testdocs": "if [ \"$(documentation readme -dgs API | grep -vF 'up to date')\" ]; then echo 'Must run: npm run docs'; exit 1; fi;",
     "docs": "documentation readme -gs API",
-    "travis": "npm run lint-check && npm run flow && npm run test && nyc report --reporter=text-lcov | coveralls"
+    "travis": "npm run lint-check && npm run flow && npm run testdocs && npm run testonly && nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
