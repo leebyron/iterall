@@ -144,7 +144,7 @@ test('isIterable true for iterable Object', () => {
   isIterable(iterSampleFib()) === true
 })
 
-function* genSampleFib() /*: Iterable<number> */ {
+function* genSampleFib() /*: Generator<number, void, void> */ {
   var x = 0
   var y = 1
   while (x < 10) {
