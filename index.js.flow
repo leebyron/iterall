@@ -20,71 +20,60 @@ declare export function isArrayLike(obj: any): boolean
 
 declare export function isCollection(obj: any): boolean
 
-declare export var getIterator: (<TValue>(
-  Iterable<TValue>
-) => Iterator<TValue>) &
-  ((mixed) => void | Iterator<mixed>)
+declare export var getIterator:
+  & (<TValue>(iterable: Iterable<TValue>) => Iterator<TValue>)
+  & ((iterable: mixed) => void | Iterator<mixed>)
 
-declare export var getIteratorMethod: (<TValue>(
-  Iterable<TValue>
-) => () => Iterator<TValue>) &
-  ((mixed) => void | (() => Iterator<mixed>))
+declare export var getIteratorMethod:
+  & (<TValue>(iterable: Iterable<TValue>) => (() => Iterator<TValue>))
+  & ((iterable: mixed) => (void | (() => Iterator<mixed>)))
 
-declare export var createIterator: (<TValue>(
-  Iterable<TValue>
-) => Iterator<TValue>) &
-  (({ length: number }) => Iterator<mixed>) &
-  ((mixed) => void | Iterator<mixed>)
+declare export var createIterator:
+  & (<TValue>(collection: Iterable<TValue>) => Iterator<TValue>)
+  & ((collection: {length: number}) => Iterator<mixed>)
+  & ((collection: mixed) => (void | Iterator<mixed>))
 
-declare type Callback<TValue, TCollection> = (
-  value: TValue,
-  index: number,
-  collection: TCollection
-) => any
-
-declare export var forEach: (<TValue, TCollection: Iterable<TValue>>(
-  collection: TCollection,
-  callbackFn: Callback<TValue, TCollection>,
-  thisArg?: any
-) => void) &
-  (<TCollection: { length: number }>(
-    collection: TCollection,
-    callbackFn: Callback<mixed, TCollection>,
-    thisArg?: any
-  ) => void)
+declare export var forEach:
+  & (<TValue, TCollection: Iterable<TValue>>(
+      collection: TCollection,
+      callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => void)
+  & (<TCollection: {length: number}>(
+      collection: TCollection,
+      callbackFn: (value: mixed, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => void)
 
 declare export var $$asyncIterator: '@@asyncIterator'
 
 declare export function isAsyncIterable(obj: any): boolean
 
-declare export var getAsyncIterator: (<TValue>(
-  AsyncIterable<TValue>
-) => AsyncIterator<TValue>) &
-  ((mixed) => void | AsyncIterator<mixed>)
+declare export var getAsyncIterator:
+  & (<TValue>(asyncIterable: AsyncIterable<TValue>) => AsyncIterator<TValue>)
+  & ((asyncIterable: mixed) => (void | AsyncIterator<mixed>))
 
-declare export var getAsyncIteratorMethod: (<TValue>(
-  AsyncIterable<TValue>
-) => () => AsyncIterator<TValue>) &
-  ((mixed) => void | (() => AsyncIterator<mixed>))
+declare export var getAsyncIteratorMethod:
+  & (<TValue>(asyncIterable: AsyncIterable<TValue>) => (() => AsyncIterator<TValue>))
+  & ((asyncIterable: mixed) => (void | (() => AsyncIterator<mixed>)))
 
-declare export var createAsyncIterator: (<TValue>(
-  AsyncIterable<TValue> | Iterable<Promise<TValue> | TValue>
-) => AsyncIterator<TValue>) &
-  (({ length: number }) => AsyncIterator<mixed>) &
-  ((mixed) => void | AsyncIterator<mixed>)
+declare export var createAsyncIterator:
+  & (<TValue>(
+      collection:
+        | Iterable<Promise<TValue> | TValue>
+        | AsyncIterable<TValue>
+    ) => AsyncIterator<TValue>)
+  & ((collection: {length: number}) => AsyncIterator<mixed>)
+  & ((collection: mixed) => (void | AsyncIterator<mixed>))
 
-declare export var forAwaitEach: (<TValue, TCollection: AsyncIterable<TValue>>(
-  collection: TCollection,
-  callbackFn: Callback<TValue, TCollection>,
-  thisArg?: any
-) => Promise<void>) &
-  (<TValue, TCollection: Iterable<Promise<TValue> | TValue>>(
-    collection: TCollection,
-    callbackFn: Callback<TValue, TCollection>,
-    thisArg?: any
-  ) => Promise<void>) &
-  (<TCollection: { length: number }>(
-    collection: TCollection,
-    callbackFn: Callback<mixed, TCollection>,
-    thisArg?: any
-  ) => Promise<void>)
+declare export var forAwaitEach:
+  & (<TValue, TCollection: Iterable<Promise<TValue> | TValue> | AsyncIterable<TValue>>(
+      collection: TCollection,
+      callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => Promise<void>)
+  & (<TCollection: { length: number }>(
+      collection: TCollection,
+      callbackFn: (value: mixed, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => Promise<void>)

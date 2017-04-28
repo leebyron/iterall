@@ -144,7 +144,7 @@ test('isIterable true for iterable Object', () => {
   isIterable(iterSampleFib()) === true
 })
 
-function* genSampleFib() {
+function* genSampleFib() /*: Iterable<number> */ {
   var x = 0
   var y = 1
   while (x < 10) {
@@ -317,13 +317,20 @@ test('getIterator provides Iterator for empty String', () => {
 })
 
 test('getIterator undefined for Number', () =>
+  // Note: Flow correctly accepts a mixed type without complaints.
+  // prettier-ignore
+  getIterator((1/*: mixed*/)) === undefined &&
+  // $FlowExpectError: Flow correctly asserts that this type isn't Iterable.
   getIterator(1) === undefined &&
+  // $FlowExpectError
   getIterator(0) === undefined &&
   getIterator(new Number(123)) === undefined && // eslint-disable-line no-new-wrappers
   getIterator(NaN) === undefined)
 
 test('getIterator undefined for Boolean', () =>
+  // $FlowExpectError: Flow correctly asserts that this type isn't Iterable.
   getIterator(true) === undefined &&
+  // $FlowExpectError
   getIterator(false) === undefined &&
   getIterator(new Boolean(true)) === undefined) // eslint-disable-line no-new-wrappers
 
@@ -353,7 +360,7 @@ test('getIterator provides Iterator for iterable Object', () => {
 
 function oldStyleIterable() {
   return {
-    '@@iterator'() {
+    '@@iterator'() /*: Iterator<number>*/ {
       return {
         next() {
           return { value: Infinity, done: false }
@@ -780,14 +787,22 @@ test('getAsyncIterator provides AsyncIterator for AsyncIterable', () => {
 })
 
 test('getAsyncIterator provides undefined for Array', () =>
+  // $FlowExpectError: Flow correctly asserts that Arrays are not AsyncIterable
   getAsyncIterator(['Alpha', 'Bravo', 'Charlie']) === undefined &&
+  // $FlowExpectError
   getAsyncIterator([]) === undefined)
 
 test('getAsyncIterator provides undefined for String', () =>
+  // Flow accepts mixed input without complaint
+  // prettier-ignore
+  getAsyncIterator(('A'/*: mixed*/)) === undefined &&
+  // $FlowExpectError: Flow correctly asserts that strings are not AsyncIterable
   getAsyncIterator('A') === undefined &&
+  // $FlowExpectError
   getAsyncIterator('0') === undefined &&
-  getAsyncIterator(new String('ABC')) === undefined && // eslint-disable-line no-new-wrappers
-  getAsyncIterator('') === undefined)
+  // $FlowExpectError
+  getAsyncIterator('') === undefined &&
+  getAsyncIterator(new String('ABC')) === undefined) // eslint-disable-line no-new-wrappers
 
 test('getAsyncIterator undefined for null', () =>
   getAsyncIterator(null) === undefined)
@@ -801,7 +816,7 @@ test('getAsyncIterator provides undefined for Iterable and Generator', () =>
 
 function nonSymbolAsyncIterable() {
   return {
-    '@@asyncIterator'() {
+    '@@asyncIterator'() /*: AsyncIterator<number>*/ {
       return {
         next() {
           return Promise.resolve({ value: Infinity, done: false })
@@ -1047,7 +1062,17 @@ test('forAwaitEach iterates over Array of Promises', async () => {
     Promise.resolve('Bravo'),
     Promise.resolve('Charlie')
   ]
-  // $FlowFixMe expected function override to apply.
+  await forAwaitEach(myArray, spy, spy)
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myArray]],
+    [spy, ['Bravo', 1, myArray]],
+    [spy, ['Charlie', 2, myArray]]
+  ])
+})
+
+test('forAwaitEach iterates over Array of mixed Values and Promises', async () => {
+  var spy = createSpy()
+  var myArray = [Promise.resolve('Alpha'), 'Bravo', Promise.resolve('Charlie')]
   await forAwaitEach(myArray, spy, spy)
   assert.deepEqual(spy.calls, [
     [spy, ['Alpha', 0, myArray]],

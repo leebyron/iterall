@@ -9,7 +9,7 @@
     "flow": "flow check",
     "lint": "npm run prettier -- --write",
     "lint-check": "npm run prettier -- --list-different",
-    "prettier": "prettier --single-quote --no-semi --parser flow '*.{js,flow}'",
+    "prettier": "prettier --single-quote --no-semi '*.js'",
     "testonly": "nyc --check-coverage --statements 100 node test.js",
     "testdocs": "if [ \"$(documentation readme -dgs API | grep -vF 'up to date')\" ]; then echo 'Must run: npm run docs'; exit 1; fi;",
     "docs": "documentation readme -gs API",
@@ -41,7 +41,7 @@
   "devDependencies": {
     "coveralls": "2.13.0",
     "documentation": "4.0.0-beta5",
-    "flow-bin": "0.44.2",
+    "flow-bin": "0.45.0",
     "nyc": "10.2.0",
     "prettier": "1.2.2"
   }
