@@ -106,7 +106,7 @@ environments and bleeding-edge browsers to implement `Iterable`.
 
 In the same way that `Iterator` provides a common interface for accessing many
 different kinds of data-structures, `AsyncIterator` provides a common interface
-over a stream (or Observable) of values.
+over an asynchronous sequence of values (similar to Stream or Observable).
 
 Async Iterators are not yet an official part of JavaScript, however they're
 a "Stage 3" proposal to be added, and browser vendors are
