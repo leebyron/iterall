@@ -515,15 +515,15 @@ Chirper.prototype[$$asyncIterator] = function () {
     to: this.to,
     num: 0,
     next () {
-      return new Promise(function (resolve) {
+      return new Promise( resolve => {
         if (this.num >= this.to) {
           resolve({ value: undefined, done: true })
         } else {
-          setTimeout(function () {
+          setTimeout( () => {
             resolve({ value: this.num++, done: false })
           }, 1000)
         }
-      }
+      })
     }
   }
 }
