@@ -523,7 +523,7 @@ Chirper.prototype[$$asyncIterator] = function () {
             resolve({ value: this.num++, done: false })
           }, 1000)
         }
-      }
+      })
     }
   }
 }
