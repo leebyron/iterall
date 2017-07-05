@@ -1,3 +1,6 @@
+[ignore]
+.*/node_modules/.*
+
 [options]
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectError
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe

@@ -74,7 +74,7 @@ var isIterable = require('./').isIterable
 test('isIterable true for Array', () => isIterable([]) === true)
 
 test('isIterable true for TypedArray', () =>
-  isIterable(new Int8Array()) === true)
+  isIterable(new Int8Array(1)) === true)
 
 test('isIterable true for String', () =>
   isIterable('A') === true &&
@@ -100,7 +100,7 @@ test('isIterable false for undefined', () => isIterable(undefined) === false)
 test('isIterable false for non-iterable Object', () =>
   isIterable({}) === false && isIterable({ iterable: true }) === false)
 
-function argumentsObject() {
+function argumentsObject(...args) {
   return arguments
 }
 
@@ -180,7 +180,7 @@ var isArrayLike = require('./').isArrayLike
 test('isArrayLike true for Array', () => isArrayLike([]) === true)
 
 test('isArrayLike true for TypedArray', () =>
-  isArrayLike(new Int8Array()) === true)
+  isArrayLike(new Int8Array(1)) === true)
 
 test('isArrayLike true for String', () =>
   isArrayLike('A') === true &&
@@ -231,7 +231,7 @@ var isCollection = require('./').isCollection
 test('isCollection true for Array', () => isCollection([]) === true)
 
 test('isCollection true for TypedArray', () =>
-  isCollection(new Int8Array()) === true)
+  isCollection(new Int8Array(1)) === true)
 
 test('isCollection false for String literal', () =>
   isCollection('A') === false &&
@@ -425,9 +425,11 @@ var forEach = require('./').forEach
 
 function createSpy(fn) {
   var calls = []
-  function spyFn() {
-    calls.push([this, [...arguments]])
-    return fn && fn.apply(this, arguments)
+  function spyFn(...args) {
+    calls.push([this, args])
+    if (fn) {
+      return fn.apply(this, arguments)
+    }
   }
   spyFn.calls = calls
   return spyFn
@@ -1029,7 +1031,7 @@ test('forAwaitEach iterates over string literal with an async callback', async (
   var iterSpy = createSpy(function(value) {
     spy.apply(this, arguments)
     return Promise.resolve().then(() => {
-      spy.call(this, 'Waited after ' + value)
+      spy.call(this, 'Waited after ' + String(value))
     })
   })
   var myStr = 'ABC'
