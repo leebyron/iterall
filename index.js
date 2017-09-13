@@ -654,7 +654,7 @@ function forAwaitEach(source, callback, thisArg) {
         })
       }
       next()
-    });
+    })
   }
 }
 exports.forAwaitEach = forAwaitEach
