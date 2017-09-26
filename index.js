@@ -641,16 +641,20 @@ function forAwaitEach(source, callback, thisArg) {
   var asyncIterator = createAsyncIterator(source)
   if (asyncIterator) {
     var i = 0
-    function next() {
-      return asyncIterator.next().then(function(step) {
-        if (!step.done) {
-          return Promise.resolve(
-            callback.call(thisArg, step.value, i++, source)
-          ).then(next)
-        }
-      })
-    }
-    return next()
+    return new Promise(resolve => {
+      function next() {
+        return asyncIterator.next().then(function(step) {
+          if (!step.done) {
+            Promise.resolve(
+              callback.call(thisArg, step.value, i++, source)
+            ).then(next)
+          } else {
+            resolve()
+          }
+        })
+      }
+      next()
+    })
   }
 }
 exports.forAwaitEach = forAwaitEach
