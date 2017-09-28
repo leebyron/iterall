@@ -1135,3 +1135,90 @@ test('forAwaitEach iterates over custom AsyncIterable', () => {
     ])
   )
 })
+
+test('forAwaitEach catches callback errors', () => {
+  var myIterable = iterSampleFib()
+  var error = new Error()
+  var callback = () => {
+    throw error
+  }
+  return forAwaitEach(myIterable, callback).catch(e =>
+    assert.strictEqual(e, error)
+  )
+})
+
+function* genError(error, on) /*: Generator<number, void, void> */ {
+  var x = 0
+  while (true) {
+    if (x >= on) {
+      throw error
+    }
+    yield x
+    x = x + 1
+  }
+}
+
+test('forAwaitEach catches Iterable errors', async () => {
+  await Promise.all(
+    [0, 1, 2].map(async on => {
+      var spy = createSpy()
+      var error = new Error()
+      var myIterable = genError(error, on)
+      await forAwaitEach(myIterable, spy, spy).catch(e =>
+        assert.strictEqual(e, error)
+      )
+      assert.equal(spy.calls.length, on)
+    })
+  )
+})
+
+function ChirpError(error, on, inPromise) {
+  this.error = error
+  this.on = on
+  this.inPromise = inPromise
+}
+
+ChirpError.prototype[$$asyncIterator] = function() {
+  return {
+    error: this.error,
+    on: this.on,
+    inPromise: this.inPromise,
+    num: 0,
+    next() {
+      if (!this.inPromise && this.num >= this.on) {
+        throw this.error
+      }
+      return new Promise(resolve => {
+        if (this.num >= this.on) {
+          throw this.error
+        } else {
+          resolve({ value: this.num++, done: false })
+        }
+      })
+    },
+    [$$asyncIterator]() {
+      return this
+    }
+  }
+}
+
+test('forAwaitEach catches AsyncIterable errors', async () => {
+  await Promise.all(
+    [
+      { on: 0, inPromise: false },
+      { on: 0, inPromise: true },
+      { on: 1, inPromise: false },
+      { on: 1, inPromise: true },
+      { on: 2, inPromise: false },
+      { on: 2, inPromise: true }
+    ].map(async ({ on, inPromise }) => {
+      var spy = createSpy()
+      var error = new Error()
+      var myAsyncIterable = new ChirpError(error, on, inPromise)
+      await forAwaitEach(myAsyncIterable, spy, spy).catch(e =>
+        assert.strictEqual(e, error)
+      )
+      assert.equal(spy.calls.length, on)
+    })
+  )
+})
