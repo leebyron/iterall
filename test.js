@@ -10,6 +10,15 @@
 
 var assert = require('assert')
 
+process.on('unhandledRejection', error => {
+  console.log('\x1B[31m  \u2718 \x1B[0m unhandledRejection')
+  process.exitCode = 1
+  process.on('beforeExit', function() {
+    console.error('\n\x1B[41m unhandledRejection \x1B[0m')
+    console.error((error && error.stack) || error)
+  })
+})
+
 async function test(name, rule) {
   try {
     var result = await rule()
