@@ -596,6 +596,7 @@ AsyncFromSyncIterator.prototype.next = function() {
 /**
  * Given an object which either implements the AsyncIterable protocol or is
  * Array-like, iterate over it, calling the `callback` at each iteration.
+ * Callback functions may exit iteration early by explicitly returning false.
  *
  * Use `forAwaitEach` where you would expect to use a `for-await-of` loop.
  *
@@ -648,7 +649,7 @@ function forAwaitEach(source, callback, thisArg) {
           .then(function(step) {
             if (!step.done) {
               Promise.resolve(callback.call(thisArg, step.value, i++, source))
-                .then(next)
+                .then(function(result) { return result === false ? resolve() : next() })
                 .catch(reject)
             } else {
               resolve()
