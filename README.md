@@ -515,7 +515,7 @@ instead use `getAsyncIterator()` or `isAsyncIterable()`.
 
 ```javascript
 var $$asyncIterator = require('iterall').$$asyncIterator
-
+  
 function Chirper (to) {
   this.to = to
 }
@@ -525,15 +525,16 @@ Chirper.prototype[$$asyncIterator] = function () {
     to: this.to,
     num: 0,
     next () {
+      const _this = this;
       return new Promise(function (resolve) {
-        if (this.num >= this.to) {
+        if (_this.num >= _this.to) {
           resolve({ value: undefined, done: true })
         } else {
           setTimeout(function () {
-            resolve({ value: this.num++, done: false })
+            resolve({ value: _this.num++, done: false })
           }, 1000)
         }
-      }
+      });
     }
   }
 }
