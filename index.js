@@ -286,6 +286,13 @@ ArrayLikeIterator.prototype.next = function() {
 }
 
 /**
+ * Return from the callback function provided to `forEach` or `forAwaitEach` to
+ * stop iteration before exhausting iteration.
+ */
+var BREAK = {}
+exports.BREAK = BREAK
+
+/**
  * Given an object which either implements the Iterable protocol or is
  * Array-like, iterate over it, calling the `callback` at each iteration.
  *
@@ -294,6 +301,8 @@ ArrayLikeIterator.prototype.next = function() {
  * the ECMAScript specification, skipping over "holes" in Array-likes. It will
  * also delegate to a `forEach` method on `collection` if one is defined,
  * ensuring native performance for `Arrays`.
+ *
+ * Return `iterall.BREAK` from the callback function to stop iteration early.
  *
  * Similar to [Array#forEach][], the `callback` function accepts three
  * arguments, and is provided with `thisArg` as the calling context.
@@ -333,25 +342,43 @@ ArrayLikeIterator.prototype.next = function() {
 function forEach(collection, callback, thisArg) {
   if (collection != null) {
     if (typeof collection.forEach === 'function') {
-      return collection.forEach(callback, thisArg)
-    }
-    var i = 0
-    var iterator = getIterator(collection)
-    if (iterator) {
-      var step
-      while (!(step = iterator.next()).done) {
-        callback.call(thisArg, step.value, i++, collection)
-        // Infinite Iterators could cause forEach to run forever.
-        // After a very large number of iterations, produce an error.
-        /* istanbul ignore if */
-        if (i > 9999999) {
-          throw new TypeError('Near-infinite iteration.')
+      try {
+        return collection.forEach(function(v, i, c) {
+          if (callback.call(thisArg, v, i, c) === BREAK) {
+            // To break early, throw a sentinel value.
+            throw BREAK
+          }
+        })
+      } catch (error) {
+        if (error !== BREAK) {
+          throw error
         }
       }
-    } else if (isArrayLike(collection)) {
-      for (; i < collection.length; i++) {
-        if (collection.hasOwnProperty(i)) {
-          callback.call(thisArg, collection[i], i, collection)
+    } else {
+      var i = 0
+      var iterator = getIterator(collection)
+      if (iterator) {
+        var step
+        while (!(step = iterator.next()).done) {
+          if (callback.call(thisArg, step.value, i++, collection) === BREAK) {
+            break
+          }
+          // Infinite Iterators could cause forEach to run forever.
+          // After a very large number of iterations, produce an error.
+          /* istanbul ignore if */
+          if (i > 9999999) {
+            throw new TypeError('Near-infinite iteration.')
+          }
+        }
+      } else if (isArrayLike(collection)) {
+        for (; i < collection.length; i++) {
+          if (collection.hasOwnProperty(i)) {
+            if (
+              callback.call(thisArg, collection[i], i, collection) === BREAK
+            ) {
+              break
+            }
+          }
         }
       }
     }
@@ -602,6 +629,8 @@ AsyncFromSyncIterator.prototype.next = function() {
  * Similar to [Array#forEach][], the `callback` function accepts three
  * arguments, and is provided with `thisArg` as the calling context.
  *
+ * Return `iterall.BREAK` from the callback function to stop iteration early.
+ *
  * > Note: Using `forAwaitEach` requires the existence of `Promise`.
  * > While `Promise` has been available in modern browsers for a number of
  * > years, legacy browsers (like IE 11) may require a polyfill.
@@ -642,25 +671,29 @@ function forAwaitEach(source, callback, thisArg) {
   if (asyncIterator) {
     var i = 0
     return new Promise(function(resolve, reject) {
-      function next() {
-        asyncIterator
-          .next()
-          .then(function(step) {
-            if (!step.done) {
-              Promise.resolve(callback.call(thisArg, step.value, i++, source))
-                .then(next)
-                .catch(reject)
-            } else {
-              resolve()
-            }
-            // Explicitly return null, silencing bluebird-style warnings.
-            return null
-          })
-          .catch(reject)
+      function next(result) {
+        if (result === BREAK) {
+          resolve()
+        } else {
+          asyncIterator
+            .next()
+            .then(function(step) {
+              if (!step.done) {
+                Promise.resolve(callback.call(thisArg, step.value, i++, source))
+                  .then(next)
+                  .catch(reject)
+              } else {
+                resolve()
+              }
+              // Explicitly return null, silencing bluebird-style warnings.
+              return null
+            })
+            .catch(reject)
+        }
         // Explicitly return null, silencing bluebird-style warnings.
         return null
       }
-      next()
+      next(undefined)
     })
   }
 }
