@@ -647,7 +647,7 @@ function forAwaitEach(source, callback, thisArg) {
           .next()
           .then(function(step) {
             if (!step.done) {
-              Promise.resolve(callback.call(thisArg, step.value, i++, source))
+              return Promise.resolve(callback.call(thisArg, step.value, i++, source))
                 .then(next)
                 .catch(reject)
             } else {
