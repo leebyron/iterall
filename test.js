@@ -1231,3 +1231,29 @@ test('forAwaitEach catches AsyncIterable errors', async () => {
     })
   )
 })
+
+test('forAwaitEach does not leak memory', async () => {
+  const iterable = new Chirper(100000)
+  const memoryAtStart = process.memoryUsage().heapUsed
+  let memoryAtMiddle = 0
+  await forAwaitEach(iterable, (value, index) => {
+    if (index === 50000) {
+      memoryAtMiddle = process.memoryUsage().heapUsed
+    }
+  })
+  const memoryAtEnd = process.memoryUsage().heapUsed
+  const firstHalfGrowth = Math.max(0, memoryAtMiddle - memoryAtStart)
+  const secondHalfGrowth = Math.max(0, memoryAtEnd - memoryAtMiddle)
+  const fullGrowth = Math.max(0, memoryAtEnd - memoryAtStart)
+  const proportionalGrowth = fullGrowth / memoryAtStart
+  assert(
+    secondHalfGrowth < firstHalfGrowth * 0.85 && proportionalGrowth < 0.05,
+    'Expected non-linear growth of memory use. ' +
+      `Saw: ${mb(memoryAtStart)} -> ${mb(memoryAtMiddle)} -> ${mb(memoryAtEnd)}`
+  )
+})
+
+function mb(bytes) {
+  const megabytes = bytes / Math.pow(2, 20)
+  return Math.round(megabytes * 100) / 100 + 'MB'
+}
