@@ -653,6 +653,8 @@ function forAwaitEach(source, callback, thisArg) {
             } else {
               resolve()
             }
+            // Explicitly return null, silencing bluebird-style warnings.
+            return null
           })
           .catch(reject)
       }
