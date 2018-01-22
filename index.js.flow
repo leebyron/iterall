@@ -33,6 +33,8 @@ declare export var createIterator:
   & ((collection: {length: number}) => Iterator<mixed>)
   & ((collection: mixed) => (void | Iterator<mixed>))
 
+declare export var BREAK: empty
+
 declare export var forEach:
   & (<+TValue, TCollection: Iterable<TValue>>(
       collection: TCollection,

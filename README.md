@@ -417,6 +417,11 @@ iterator.next() // { value: undefined, done: true }
 
 Returns **[Iterator](#iterator)&lt;T>** new Iterator instance.
 
+### BREAK
+
+Return from the callback function provided to `forEach` or `forAwaitEach` to
+stop iteration before exhausting iteration.
+
 ### forEach
 
 Given an object which either implements the Iterable protocol or is
@@ -427,6 +432,8 @@ However `forEach` adheres to the behavior of [Array#forEach][] described in
 the ECMAScript specification, skipping over "holes" in Array-likes. It will
 also delegate to a `forEach` method on `collection` if one is defined,
 ensuring native performance for `Arrays`.
+
+Return `iterall.BREAK` from the callback function to stop iteration early.
 
 Similar to [Array#forEach][], the `callback` function accepts three
 arguments, and is provided with `thisArg` as the calling context.
@@ -655,6 +662,8 @@ Use `forAwaitEach` where you would expect to use a `for-await-of` loop.
 
 Similar to [Array#forEach][], the `callback` function accepts three
 arguments, and is provided with `thisArg` as the calling context.
+
+Return `iterall.BREAK` from the callback function to stop iteration early.
 
 > Note: Using `forAwaitEach` requires the existence of `Promise`.
 > While `Promise` has been available in modern browsers for a number of

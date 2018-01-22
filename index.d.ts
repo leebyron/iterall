@@ -34,6 +34,8 @@ export function createIterator<TValue>(
 export function createIterator(collection: { length: number }): Iterator<any>
 export function createIterator(collection: any): void | Iterator<any>
 
+export var BREAK: any
+
 export function forEach<TValue, TCollection extends Iterable<TValue>>(
   collection: TCollection,
   callbackFn: (value: TValue, index: number, collection: TCollection) => any,
