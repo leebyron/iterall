@@ -1247,7 +1247,7 @@ test('forAwaitEach does not leak memory', async () => {
   const fullGrowth = Math.max(0, memoryAtEnd - memoryAtStart)
   const proportionalGrowth = fullGrowth / memoryAtStart
   assert(
-    secondHalfGrowth < firstHalfGrowth * 0.85 && proportionalGrowth < 0.05,
+    secondHalfGrowth < firstHalfGrowth * 0.85 && proportionalGrowth < 0.25,
     'Expected non-linear growth of memory use. ' +
       `Saw: ${mb(memoryAtStart)} -> ${mb(memoryAtMiddle)} -> ${mb(memoryAtEnd)}`
   )
