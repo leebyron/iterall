@@ -643,7 +643,7 @@ function forAwaitEach(source, callback, thisArg) {
     var i = 0
     return new Promise(function(resolve, reject) {
       function next() {
-        return asyncIterator
+        asyncIterator
           .next()
           .then(function(step) {
             if (!step.done) {
@@ -657,6 +657,8 @@ function forAwaitEach(source, callback, thisArg) {
             return null
           })
           .catch(reject)
+        // Explicitly return null, silencing bluebird-style warnings.
+        return null
       }
       next()
     })
