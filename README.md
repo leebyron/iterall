@@ -171,6 +171,58 @@ function reduce (collection, reducer, initial) {
 }
 ```
 
+> How do I break out of a `forEach` or `forAwaitEach` loop early?
+
+While `for of` and `for await of` loops allow breaking out of a loop early with
+a `break` statement, the `forEach()` and `forAwaitEach()` functions (much like
+Array's `forEach`)  do not support early breaking.
+
+Similar to the "higher order" functions described above, this library can be the
+basis for this extended behavior. To support early break outs, you can use a
+wrapping function supporting early breaking by throwing a `BREAK` sentinel value
+from the callback and using a try/catch block to early break:
+
+```js
+const BREAK = {}
+
+function forEachBreakable (collection, callback) {
+  try {
+    forEach(collection, callback)
+  } catch (error) {
+    if (error !== BREAK) {
+      throw error
+    }
+  }
+}
+
+async function forAwaitEachBreakable (collection, callback) {
+  try {
+    await forAwaitEach(collection, callback)
+  } catch (error) {
+    if (error !== BREAK) {
+      throw error
+    }
+  }
+}
+
+// Example usages:
+forEachBreakable(obj, function (value) {
+  if (shouldBreakOn(value)) {
+    throw BREAK
+  }
+  console.log(value)
+})
+
+forAwaitEachBreakable(obj, async function (value) {
+  if (await shouldBreakOn(value)) {
+    throw BREAK
+  }
+  console.log(value)
+})
+```
+
+Note: This technique also works with the native Array `forEach` method!
+
 <!--
 
 NOTE TO CONTRIBUTORS

@@ -494,6 +494,48 @@ test('forEach iterates over holey Array', () => {
   ])
 })
 
+test('forEach iterates over Array with early break', () => {
+  var BREAK = {}
+  var spy = createSpy(val => {
+    if (val === 'Bravo') {
+      throw BREAK
+    }
+  })
+  var myArray = ['Alpha', 'Bravo', 'Charlie']
+  try {
+    forEach(myArray, spy, spy)
+  } catch (e) {
+    if (e !== BREAK) {
+      throw e
+    }
+  }
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myArray]],
+    [spy, ['Bravo', 1, myArray]]
+  ])
+})
+
+test('forEach over Array propogates thrown error', () => {
+  var error = new Error('test')
+  var spy = createSpy(val => {
+    if (val === 'Bravo') {
+      throw error
+    }
+  })
+  var myArray = ['Alpha', 'Bravo', 'Charlie']
+  var caughtError
+  try {
+    forEach(myArray, spy, spy)
+  } catch (thrownError) {
+    caughtError = thrownError
+  }
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myArray]],
+    [spy, ['Bravo', 1, myArray]]
+  ])
+  assert.equal(caughtError, error)
+})
+
 test('forEach iterates over Iterator', () => {
   var spy = createSpy()
   var myArray = ['Alpha', 'Bravo', 'Charlie']
@@ -503,6 +545,28 @@ test('forEach iterates over Iterator', () => {
     [spy, ['Alpha', 0, myIterator]],
     [spy, ['Bravo', 1, myIterator]],
     [spy, ['Charlie', 2, myIterator]]
+  ])
+})
+
+test('forEach iterates over Iterator with early break', () => {
+  var BREAK = {}
+  var spy = createSpy(val => {
+    if (val === 'Bravo') {
+      throw BREAK
+    }
+  })
+  var myArray = ['Alpha', 'Bravo', 'Charlie']
+  var myIterator = getIterator(myArray)
+  try {
+    forEach(myIterator, spy, spy)
+  } catch (e) {
+    if (e !== BREAK) {
+      throw e
+    }
+  }
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myIterator]],
+    [spy, ['Bravo', 1, myIterator]]
   ])
 })
 
@@ -572,6 +636,27 @@ test('forEach iterates over holey Array-like', () => {
   assert.deepEqual(spy.calls, [
     [spy, ['One', 1, myArrayLike]],
     [spy, ['Three', 3, myArrayLike]]
+  ])
+})
+
+test('forEach iterates over Array-like with early break', () => {
+  var BREAK = {}
+  var spy = createSpy(val => {
+    if (val === 'Bravo') {
+      throw BREAK
+    }
+  })
+  var myArrayLike = arrayLike()
+  try {
+    forEach(myArrayLike, spy, spy)
+  } catch (e) {
+    if (e !== BREAK) {
+      throw e
+    }
+  }
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myArrayLike]],
+    [spy, ['Bravo', 1, myArrayLike]]
   ])
 })
 
@@ -1067,6 +1152,27 @@ test('forAwaitEach iterates over Array', async () => {
   ])
 })
 
+test('forAwaitEach iterates over Array with early break', async () => {
+  var BREAK = {}
+  var spy = createSpy(val => {
+    if (val === 'Bravo') {
+      throw BREAK
+    }
+  })
+  var myArray = ['Alpha', 'Bravo', 'Charlie']
+  try {
+    await forAwaitEach(myArray, spy, spy)
+  } catch (e) {
+    if (e !== BREAK) {
+      throw e
+    }
+  }
+  assert.deepEqual(spy.calls, [
+    [spy, ['Alpha', 0, myArray]],
+    [spy, ['Bravo', 1, myArray]]
+  ])
+})
+
 test('forAwaitEach iterates over Array of Promises', async () => {
   var spy = createSpy()
   var myArray = [
@@ -1144,6 +1250,28 @@ test('forAwaitEach iterates over custom AsyncIterable', () => {
       [spy, [2, 2, myAsyncIterable]]
     ])
   )
+})
+
+test('forAwaitEach iterates over custom AsyncIterable with early break', () => {
+  var BREAK = {}
+  var spy = createSpy(val => {
+    if (val === 1) {
+      throw BREAK
+    }
+  })
+  var myAsyncIterable = new Chirper(3)
+  return forAwaitEach(myAsyncIterable, spy, spy)
+    .catch(e => {
+      if (e !== BREAK) {
+        throw e
+      }
+    })
+    .then(() =>
+      assert.deepEqual(spy.calls, [
+        [spy, [0, 0, myAsyncIterable]],
+        [spy, [1, 1, myAsyncIterable]]
+      ])
+    )
 })
 
 test('forAwaitEach catches callback errors', () => {
