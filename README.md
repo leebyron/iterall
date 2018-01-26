@@ -1,6 +1,6 @@
 # JavaScript [Iterators][] and [AsyncIterators][] for all!
 
-[![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![710 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-710%20B-blue.svg)
+[![Build Status](https://travis-ci.org/leebyron/iterall.svg?branch=master)](https://travis-ci.org/leebyron/iterall) [![Coverage Status](https://coveralls.io/repos/github/leebyron/iterall/badge.svg?branch=master)](https://coveralls.io/github/leebyron/iterall?branch=master) ![710 bytes minified and gzipped](https://img.shields.io/badge/min%20gzip%20size-757%20B-blue.svg)
 
 `iterall` provides a few crucial utilities for implementing and working with
 [Iterables][iterators], [Async Iterables][asynciterators] and
