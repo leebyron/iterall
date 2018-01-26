@@ -261,8 +261,6 @@ automatically update README.md
 
 ### Iterable
 
-[index.js:39-39](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L39-L39 "Source code on GitHub")
-
 -   **See: [MDN Iteration protocols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable)**
 
 [Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable)
@@ -277,8 +275,6 @@ it can be utilized by any version of JavaScript.
 
 ### Iterator
 
-[index.js:39-39](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L39-L39 "Source code on GitHub")
-
 -   **See: [MDN Iteration protocols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)**
 
 [Iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)
@@ -289,8 +285,6 @@ While described by the [ES2015 version of JavaScript](http://www.ecma-internatio
 it can be utilized by any version of JavaScript.
 
 ### $$iterator
-
-[index.js:79-79](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L79-L79 "Source code on GitHub")
 
 A property name to be used as the name of an Iterable's method responsible
 for producing an Iterator, referred to as `@@iterator`. Typically represents
@@ -331,8 +325,6 @@ for (var number of counter) {
 
 ### isIterable
 
-[index.js:99-101](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L99-L101 "Source code on GitHub")
-
 Returns true if the provided object implements the Iterator protocol via
 either implementing a `Symbol.iterator` or `"@@iterator"` method.
 
@@ -355,8 +347,6 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ### isArrayLike
 
-[index.js:121-124](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L121-L124 "Source code on GitHub")
-
 Returns true if the provided object implements the Array-like protocol via
 defining a positive-integer `length` property.
 
@@ -378,8 +368,6 @@ isArrayLike(new Map()) // false
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if Array-like.
 
 ### isCollection
-
-[index.js:158-160](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L158-L160 "Source code on GitHub")
 
 Returns true if the provided object is an Object (i.e. not a string literal)
 and is either Iterable or Array-like.
@@ -417,8 +405,6 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ### getIterator
 
-[index.js:181-186](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L181-L186 "Source code on GitHub")
-
 If the provided object implements the Iterator protocol, its Iterator object
 is returned. Otherwise returns undefined.
 
@@ -440,8 +426,6 @@ iterator.next() // { value: undefined, done: true }
 Returns **[Iterator](#iterator)&lt;T>** new Iterator instance.
 
 ### getIteratorMethod
-
-[index.js:210-218](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L210-L218 "Source code on GitHub")
 
 If the provided object implements the Iterator protocol, the method
 responsible for producing its Iterator object is returned.
@@ -467,8 +451,6 @@ if (method) {
 Returns **function (): [Iterator](#iterator)&lt;T>** `@@iterator` method.
 
 ### createIterator
-
-[index.js:249-259](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L249-L259 "Source code on GitHub")
 
 Similar to [getIterator](#getiterator), this method returns a new Iterator given an
 Iterable. However it will also create an Iterator for a non-Iterable
@@ -501,8 +483,6 @@ iterator.next() // { value: undefined, done: true }
 Returns **[Iterator](#iterator)&lt;T>** new Iterator instance.
 
 ### forEach
-
-[index.js:329-355](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L329-L355 "Source code on GitHub")
 
 Given an object which either implements the Iterable protocol or is
 Array-like, iterate over it, calling the `callback` at each iteration.
@@ -550,8 +530,6 @@ forEach(myIterable, function (value) {
 
 ### AsyncIterable
 
-[index.js:399-399](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L399-L399 "Source code on GitHub")
-
 -   **See: [Async Iteration Proposal](https://tc39.github.io/proposal-async-iteration/#sec-asynciterable-interface)**
 
 [AsyncIterable](https://tc39.github.io/proposal-async-iteration/#sec-asynciterable-interface)
@@ -564,8 +542,6 @@ While described as a proposed addition to the [ES2017 version of JavaScript](htt
 it can be utilized by any version of JavaScript.
 
 ### AsyncIterator
-
-[index.js:399-399](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L399-L399 "Source code on GitHub")
 
 -   **See: [Async Iteration Proposal](https://tc39.github.io/proposal-async-iteration/#sec-asynciterator-interface)**
 
@@ -582,8 +558,6 @@ While described as a proposed addition to the [ES2017 version of JavaScript](htt
 it can be utilized by any version of JavaScript.
 
 ### $$asyncIterator
-
-[index.js:444-444](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L444-L444 "Source code on GitHub")
 
 A property name to be used as the name of an AsyncIterable's method
 responsible for producing an Iterator, referred to as `@@asyncIterator`.
@@ -629,8 +603,6 @@ for await (var number of chirper) {
 
 ### isAsyncIterable
 
-[index.js:461-463](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L461-L463 "Source code on GitHub")
-
 Returns true if the provided object implements the AsyncIterator protocol via
 either implementing a `Symbol.asyncIterator` or `"@@asyncIterator"` method.
 
@@ -649,8 +621,6 @@ isAsyncIterable('ABC') // false
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** true if AsyncIterable.
 
 ### getAsyncIterator
-
-[index.js:484-489](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L484-L489 "Source code on GitHub")
 
 If the provided object implements the AsyncIterator protocol, its
 AsyncIterator object is returned. Otherwise returns undefined.
@@ -673,8 +643,6 @@ asyncIterator.next().then(console.log) // { value: undefined, done: true }
 Returns **[AsyncIterator](#asynciterator)&lt;T>** new AsyncIterator instance.
 
 ### getAsyncIteratorMethod
-
-[index.js:512-521](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L512-L521 "Source code on GitHub")
 
 If the provided object implements the AsyncIterator protocol, the method
 responsible for producing its AsyncIterator object is returned.
@@ -699,8 +667,6 @@ if (method) {
 Returns **function (): [AsyncIterator](#asynciterator)&lt;T>** `@@asyncIterator` method.
 
 ### createAsyncIterator
-
-[index.js:557-568](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L557-L568 "Source code on GitHub")
 
 Similar to [getAsyncIterator](#getasynciterator), this method returns a new AsyncIterator
 given an AsyncIterable. However it will also create an AsyncIterator for a
@@ -738,8 +704,6 @@ iterator.next().then(console.log) // { value: undefined, done: true }
 Returns **[AsyncIterator](#asynciterator)&lt;T>** new AsyncIterator instance.
 
 ### forAwaitEach
-
-[index.js:635-661](https://github.com/leebyron/iterall/blob/de0a730a3a27346139249b7961c37d995ccadf76/index.js#L635-L661 "Source code on GitHub")
 
 Given an object which either implements the AsyncIterable protocol or is
 Array-like, iterate over it, calling the `callback` at each iteration.
