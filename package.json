@@ -39,11 +39,11 @@
   },
   "homepage": "https://github.com/leebyron/iterall#readme",
   "devDependencies": {
-    "coveralls": "2.13.1",
-    "documentation": "4.0.0-beta.19",
+    "coveralls": "3.0.0",
+    "documentation": "5.3.5",
     "flow-bin": "0.49.1",
-    "nyc": "11.0.3",
-    "prettier": "1.5.2",
+    "nyc": "11.4.1",
+    "prettier": "1.10.2",
     "regression": "2.0.1"
   }
 }

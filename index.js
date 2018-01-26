@@ -16,27 +16,23 @@
  * While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterator-interface)
  * it can be utilized by any version of JavaScript.
  *
- * @typedef {Object} Iterator
- * @template T The type of each iterated value
- * @property {function (): { value: T, done: boolean }} next
- *   A method which produces either the next value in a sequence or a result
- *   where the `done` property is `true` indicating the end of the Iterator.
+ * @external Iterator
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator|MDN Iteration protocols}
  */
 
 /**
  * [Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable)
  * is a *protocol* which when implemented allows a JavaScript object to define
- * their iteration behavior, such as what values are looped over in a `for..of`
+ * their iteration behavior, such as what values are looped over in a
+ * [`for...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of)
  * loop or `iterall`'s `forEach` function. Many [built-in types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#Builtin_iterables)
  * implement the Iterable protocol, including `Array` and `Map`.
  *
  * While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterable-interface)
  * it can be utilized by any version of JavaScript.
  *
- * @typedef {Object} Iterable
- * @template T The type of each iterated value
- * @property {function (): Iterator<T>} Symbol.iterator
- *   A method which produces an Iterator for this Iterable.
+ * @external Iterable
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable|MDN Iteration protocols}
  */
 
 // In ES2015 (or a polyfilled) environment, this will be Symbol.iterator
@@ -50,7 +46,7 @@ var SYMBOL_ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  *
  * Use `$$iterator` for defining new Iterables instead of `Symbol.iterator`,
  * but do not use it for accessing existing Iterables, instead use
- * `getIterator()` or `isIterable()`.
+ * {@link getIterator} or {@link isIterable}.
  *
  * @example
  *
@@ -223,7 +219,7 @@ function getIteratorMethod(iterable) {
 exports.getIteratorMethod = getIteratorMethod
 
 /**
- * Similar to `getIterator()`, this method returns a new Iterator given an
+ * Similar to {@link getIterator}, this method returns a new Iterator given an
  * Iterable. However it will also create an Iterator for a non-Iterable
  * Array-like collection, such as Array in a non-ES2015 environment.
  *
@@ -366,38 +362,37 @@ exports.forEach = forEach
 /////////////////////////////////////////////////////
 
 /**
- * [AsyncIterator](https://tc39.github.io/proposal-async-iteration/)
- * is a *protocol* which describes a standard way to produce and consume an
- * asynchronous sequence of values, typically the values of the AsyncIterable
- * represented by this AsyncIterator.
- *
- * AsyncIterator is similar to Observable or Stream.
- *
- * While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
- * it can be utilized by any version of JavaScript.
- *
- * @typedef {Object} AsyncIterator
- * @template T The type of each iterated value
- * @property {function (): Promise<{ value: T, done: boolean }>} next
- *   A method which produces a Promise which resolves to either the next value
- *   in a sequence or a result where the `done` property is `true` indicating
- *   the end of the sequence of values. It may also produce a Promise which
- *   becomes rejected, indicating a failure.
- */
-
-/**
- * AsyncIterable is a *protocol* which when implemented allows a JavaScript
- * object to define their asynchronous iteration behavior, such as what values
- * are looped over in a `for-await-of` loop or `iterall`'s `forAwaitEach`
- * function.
+ * [AsyncIterable](https://tc39.github.io/proposal-async-iteration/#sec-asynciterable-interface)
+ * is a *protocol* which when implemented allows a JavaScript object to define
+ * an asynchronous iteration behavior, such as what values are looped over in
+ * a [`for-await-of`](https://tc39.github.io/proposal-async-iteration/#sec-for-in-and-for-of-statements)
+ * loop or `iterall`'s {@link forAwaitEach} function.
  *
  * While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
  * it can be utilized by any version of JavaScript.
  *
- * @typedef {Object} AsyncIterable
+ * @external AsyncIterable
+ * @see {@link https://tc39.github.io/proposal-async-iteration/#sec-asynciterable-interface|Async Iteration Proposal}
  * @template T The type of each iterated value
  * @property {function (): AsyncIterator<T>} Symbol.asyncIterator
  *   A method which produces an AsyncIterator for this AsyncIterable.
+ */
+
+/**
+ * [AsyncIterator](https://tc39.github.io/proposal-async-iteration/#sec-asynciterator-interface)
+ * is a *protocol* which describes a standard way to produce and consume an
+ * asynchronous sequence of values, typically the values of the
+ * {@link AsyncIterable} represented by this {@link AsyncIterator}.
+ *
+ * AsyncIterator is similar to Observable or Stream. Like an {@link Iterator} it
+ * also as a `next()` method, however instead of an IteratorResult,
+ * calling this method returns a {@link Promise} for a IteratorResult.
+ *
+ * While described as a proposed addition to the [ES2017 version of JavaScript](https://tc39.github.io/proposal-async-iteration/)
+ * it can be utilized by any version of JavaScript.
+ *
+ * @external AsyncIterator
+ * @see {@link https://tc39.github.io/proposal-async-iteration/#sec-asynciterator-interface|Async Iteration Proposal}
  */
 
 // In ES2017 (or a polyfilled) environment, this will be Symbol.asyncIterator
@@ -411,7 +406,7 @@ var SYMBOL_ASYNC_ITERATOR = typeof Symbol === 'function' && Symbol.asyncIterator
  *
  * Use `$$asyncIterator` for defining new AsyncIterables instead of
  * `Symbol.asyncIterator`, but do not use it for accessing existing Iterables,
- * instead use `getAsyncIterator()` or `isAsyncIterable()`.
+ * instead use {@link getAsyncIterator} or {@link isAsyncIterable}.
  *
  * @example
  *
@@ -527,7 +522,7 @@ function getAsyncIteratorMethod(asyncIterable) {
 exports.getAsyncIteratorMethod = getAsyncIteratorMethod
 
 /**
- * Similar to `getAsyncIterator()`, this method returns a new AsyncIterator
+ * Similar to {@link getAsyncIterator}, this method returns a new AsyncIterator
  * given an AsyncIterable. However it will also create an AsyncIterator for a
  * non-async Iterable as well as non-Iterable Array-like collection, such as
  * Array in a pre-ES2015 environment.
@@ -597,7 +592,7 @@ AsyncFromSyncIterator.prototype.next = function() {
  * Given an object which either implements the AsyncIterable protocol or is
  * Array-like, iterate over it, calling the `callback` at each iteration.
  *
- * Use `forAwaitEach` where you would expect to use a `for-await-of` loop.
+ * Use `forAwaitEach` where you would expect to use a [for-await-of](https://tc39.github.io/proposal-async-iteration/#sec-for-in-and-for-of-statements) loop.
  *
  * Similar to [Array#forEach][], the `callback` function accepts three
  * arguments, and is provided with `thisArg` as the calling context.
