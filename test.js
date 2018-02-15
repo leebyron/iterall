@@ -126,8 +126,9 @@ function arrayLike() {
 test('isIterable false for non-iterable Array-like Object', () =>
   isIterable(arrayLike()) === false)
 
-function iterSampleFib() {
-  return {
+// Flow has trouble tracking Symbol values and computed properties.
+function iterSampleFib() /*: Iterable<number> */ {
+  const iterable /*: any*/ = {
     [$$iterator]() {
       var x = 0
       var y = 1
@@ -148,6 +149,7 @@ function iterSampleFib() {
       return iter
     }
   }
+  return iterable
 }
 
 test('isIterable true for iterable Object', () => {
@@ -168,9 +170,10 @@ test('isIterable true for Generator', () => {
   isIterable(genSampleFib()) === true
 })
 
-function badIterable() {
+function badIterable() /*: mixed */ {
   return {
-    // $FlowExpectError
+    // Note: this is a property instead of a method, therefore not matching
+    // the iterable protocol.
     [$$iterator]: {
       next: function() {
         return { value: 'value', done: false }
@@ -330,17 +333,17 @@ test('getIterator undefined for Number', () =>
   // Note: Flow correctly accepts a mixed type without complaints.
   // prettier-ignore
   getIterator((1/*: mixed*/)) === undefined &&
-  // $FlowExpectError: Flow correctly asserts that this type isn't Iterable.
+  // Flow allows providing any value
   getIterator(1) === undefined &&
-  // $FlowExpectError
+  // Flow allows providing any value
   getIterator(0) === undefined &&
   getIterator(new Number(123)) === undefined && // eslint-disable-line no-new-wrappers
   getIterator(NaN) === undefined)
 
 test('getIterator undefined for Boolean', () =>
-  // $FlowExpectError: Flow correctly asserts that this type isn't Iterable.
+  // Flow allows providing any value
   getIterator(true) === undefined &&
-  // $FlowExpectError
+  // Flow allows providing any value
   getIterator(false) === undefined &&
   getIterator(new Boolean(true)) === undefined) // eslint-disable-line no-new-wrappers
 
@@ -791,11 +794,18 @@ test('$$asyncIterator is always available', () => $$asyncIterator != null)
 test('$$asyncIterator is Symbol.asyncIterator when available', () =>
   Symbol.asyncIterator && $$asyncIterator === Symbol.asyncIterator)
 
+// Flow has trouble tracking Symbol values and computed properties.
+/*:: declare class Chirper implements AsyncIterable<number> {
+  constructor(number): void;
+  @@asyncIterator(): AsyncIterator<number>
+} */
+
 function Chirper(to) {
   this.to = to
 }
 
-Chirper.prototype[$$asyncIterator] = function() {
+const ChirperPrototype /*: any */ = Chirper.prototype
+ChirperPrototype[$$asyncIterator] = function() {
   return {
     to: this.to,
     num: 0,
@@ -815,8 +825,9 @@ Chirper.prototype[$$asyncIterator] = function() {
 }
 
 test('$$asyncIterator can be used to create new iterables', () => {
-  var chirper = new Chirper(3)
-  var iterator = chirper[$$asyncIterator]()
+  // Flow has trouble tracking Symbol values and computed properties.
+  var chirper /*: any*/ = new Chirper(3)
+  var iterator /*: AsyncIterator<number>*/ = chirper[$$asyncIterator]()
 
   return Promise.all([
     iterator
@@ -884,20 +895,20 @@ test('getAsyncIterator provides AsyncIterator for AsyncIterable', () => {
 })
 
 test('getAsyncIterator provides undefined for Array', () =>
-  // $FlowExpectError: Flow correctly asserts that Arrays are not AsyncIterable
+  // Flow allows providing any value
   getAsyncIterator(['Alpha', 'Bravo', 'Charlie']) === undefined &&
-  // $FlowExpectError
+  // Flow allows providing any value
   getAsyncIterator([]) === undefined)
 
 test('getAsyncIterator provides undefined for String', () =>
   // Flow accepts mixed input without complaint
   // prettier-ignore
   getAsyncIterator(('A'/*: mixed*/)) === undefined &&
-  // $FlowExpectError: Flow correctly asserts that strings are not AsyncIterable
+  // Flow allows providing any value
   getAsyncIterator('A') === undefined &&
-  // $FlowExpectError
+  // Flow allows providing any value
   getAsyncIterator('0') === undefined &&
-  // $FlowExpectError
+  // Flow allows providing any value
   getAsyncIterator('') === undefined &&
   getAsyncIterator(new String('ABC')) === undefined) // eslint-disable-line no-new-wrappers
 
@@ -1005,7 +1016,8 @@ test('createAsyncIterator creates AsyncIterator for string literal', () => {
 })
 
 test('createAsyncIterator creates Iterator for Array', () => {
-  var iterator = createAsyncIterator(['Alpha', 'Bravo', 'Charlie'])
+  var data /*: Array<string> */ = ['Alpha', 'Bravo', 'Charlie']
+  var iterator = createAsyncIterator(data)
   assert(iterator)
   return Promise.all([
     iterator
@@ -1310,13 +1322,19 @@ test('forAwaitEach catches Iterable errors', async () => {
   )
 })
 
+// Flow has trouble tracking Symbol values and computed properties.
+/*:: declare class ChirpError implements AsyncIterable<number> {
+  constructor(...any): void;
+  @@asyncIterator(): AsyncIterator<number>
+} */
 function ChirpError(error, on, inPromise) {
   this.error = error
   this.on = on
   this.inPromise = inPromise
 }
 
-ChirpError.prototype[$$asyncIterator] = function() {
+var ChirpErrorPrototype /*: any */ = ChirpError.prototype
+ChirpErrorPrototype[$$asyncIterator] = function() {
   return {
     error: this.error,
     on: this.on,

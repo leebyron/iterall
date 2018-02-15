@@ -6,7 +6,7 @@
   "typings": "index.d.ts",
   "scripts": {
     "test": "npm run lint && npm run flow && npm run testonly && npm run testdocs",
-    "flow": "flow check",
+    "flow": "flow check --include-warnings",
     "lint": "npm run prettier -- --write",
     "lint-check": "npm run prettier -- --list-different",
     "prettier": "prettier --single-quote --no-semi '*.js'",
@@ -40,8 +40,8 @@
   "homepage": "https://github.com/leebyron/iterall#readme",
   "devDependencies": {
     "coveralls": "3.0.0",
-    "documentation": "5.3.5",
-    "flow-bin": "0.49.1",
+    "documentation": "5.4.0",
+    "flow-bin": "0.65.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "regression": "2.0.1"
