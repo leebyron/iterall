@@ -5,6 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * @flow
  * @ignore
  */
 
@@ -35,8 +36,11 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable|MDN Iteration protocols}
  */
 
+// In ES2015 environments, Symbol exists
+var SYMBOL /*: any */ = typeof Symbol === 'function' ? Symbol : void 0
+
 // In ES2015 (or a polyfilled) environment, this will be Symbol.iterator
-var SYMBOL_ITERATOR = typeof Symbol === 'function' && Symbol.iterator
+var SYMBOL_ITERATOR = SYMBOL && SYMBOL.iterator
 
 /**
  * A property name to be used as the name of an Iterable's method responsible
@@ -76,8 +80,8 @@ var SYMBOL_ITERATOR = typeof Symbol === 'function' && Symbol.iterator
  *
  * @type {Symbol|string}
  */
-var $$iterator = SYMBOL_ITERATOR || '@@iterator'
-exports.$$iterator = $$iterator
+/*:: declare export var $$iterator: '@@iterator'; */
+export var $$iterator = SYMBOL_ITERATOR || '@@iterator'
 
 /**
  * Returns true if the provided object implements the Iterator protocol via
@@ -96,10 +100,10 @@ exports.$$iterator = $$iterator
  *   A value which might implement the Iterable protocol.
  * @return {boolean} true if Iterable.
  */
-function isIterable(obj) {
+/*:: declare export function isIterable(obj: any): boolean; */
+export function isIterable(obj) {
   return !!getIteratorMethod(obj)
 }
-exports.isIterable = isIterable
 
 /**
  * Returns true if the provided object implements the Array-like protocol via
@@ -118,11 +122,11 @@ exports.isIterable = isIterable
  *   A value which might implement the Array-like protocol.
  * @return {boolean} true if Array-like.
  */
-function isArrayLike(obj) {
+/*:: declare export function isArrayLike(obj: any): boolean; */
+export function isArrayLike(obj) {
   var length = obj != null && obj.length
   return typeof length === 'number' && length >= 0 && length % 1 === 0
 }
-exports.isArrayLike = isArrayLike
 
 /**
  * Returns true if the provided object is an Object (i.e. not a string literal)
@@ -155,10 +159,10 @@ exports.isArrayLike = isArrayLike
  *   An Object value which might implement the Iterable or Array-like protocols.
  * @return {boolean} true if Iterable or Array-like Object.
  */
-function isCollection(obj) {
+/*:: declare export function isCollection(obj: any): boolean; */
+export function isCollection(obj) {
   return Object(obj) === obj && (isArrayLike(obj) || isIterable(obj))
 }
-exports.isCollection = isCollection
 
 /**
  * If the provided object implements the Iterator protocol, its Iterator object
@@ -178,13 +182,15 @@ exports.isCollection = isCollection
  *   An Iterable object which is the source of an Iterator.
  * @return {Iterator<T>} new Iterator instance.
  */
-function getIterator(iterable) {
+/*:: declare export var getIterator:
+  & (<+TValue>(iterable: Iterable<TValue>) => Iterator<TValue>)
+  & ((iterable: mixed) => void | Iterator<mixed>); */
+export function getIterator(iterable) {
   var method = getIteratorMethod(iterable)
   if (method) {
     return method.call(iterable)
   }
 }
-exports.getIterator = getIterator
 
 /**
  * If the provided object implements the Iterator protocol, the method
@@ -207,7 +213,10 @@ exports.getIterator = getIterator
  *   An Iterable object which defines an `@@iterator` method.
  * @return {function(): Iterator<T>} `@@iterator` method.
  */
-function getIteratorMethod(iterable) {
+/*:: declare export var getIteratorMethod:
+  & (<+TValue>(iterable: Iterable<TValue>) => (() => Iterator<TValue>))
+  & ((iterable: mixed) => (void | (() => Iterator<mixed>))); */
+export function getIteratorMethod(iterable) {
   if (iterable != null) {
     var method =
       (SYMBOL_ITERATOR && iterable[SYMBOL_ITERATOR]) || iterable['@@iterator']
@@ -216,7 +225,6 @@ function getIteratorMethod(iterable) {
     }
   }
 }
-exports.getIteratorMethod = getIteratorMethod
 
 /**
  * Similar to {@link getIterator}, this method returns a new Iterator given an
@@ -246,7 +254,11 @@ exports.getIteratorMethod = getIteratorMethod
  *   An Iterable or Array-like object to produce an Iterator.
  * @return {Iterator<T>} new Iterator instance.
  */
-function createIterator(collection) {
+/*:: declare export var createIterator:
+  & (<+TValue>(collection: Iterable<TValue>) => Iterator<TValue>)
+  & ((collection: {length: number}) => Iterator<mixed>)
+  & ((collection: mixed) => (void | Iterator<mixed>)); */
+export function createIterator(collection) {
   if (collection != null) {
     var iterator = getIterator(collection)
     if (iterator) {
@@ -257,7 +269,6 @@ function createIterator(collection) {
     }
   }
 }
-exports.createIterator = createIterator
 
 // When the object provided to `createIterator` is not Iterable but is
 // Array-like, this simple Iterator is created.
@@ -326,7 +337,18 @@ ArrayLikeIterator.prototype.next = function() {
  * @param [thisArg]
  *   Optional. Value to use as `this` when executing `callback`.
  */
-function forEach(collection, callback, thisArg) {
+/*:: declare export var forEach:
+  & (<+TValue, TCollection: Iterable<TValue>>(
+      collection: TCollection,
+      callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => void)
+  & (<TCollection: {length: number}>(
+      collection: TCollection,
+      callbackFn: (value: mixed, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => void); */
+export function forEach(collection, callback, thisArg) {
   if (collection != null) {
     if (typeof collection.forEach === 'function') {
       return collection.forEach(callback, thisArg)
@@ -353,7 +375,6 @@ function forEach(collection, callback, thisArg) {
     }
   }
 }
-exports.forEach = forEach
 
 /////////////////////////////////////////////////////
 //                                                 //
@@ -396,7 +417,7 @@ exports.forEach = forEach
  */
 
 // In ES2017 (or a polyfilled) environment, this will be Symbol.asyncIterator
-var SYMBOL_ASYNC_ITERATOR = typeof Symbol === 'function' && Symbol.asyncIterator
+var SYMBOL_ASYNC_ITERATOR = SYMBOL && SYMBOL.asyncIterator
 
 /**
  * A property name to be used as the name of an AsyncIterable's method
@@ -441,8 +462,8 @@ var SYMBOL_ASYNC_ITERATOR = typeof Symbol === 'function' && Symbol.asyncIterator
  *
  * @type {Symbol|string}
  */
-var $$asyncIterator = SYMBOL_ASYNC_ITERATOR || '@@asyncIterator'
-exports.$$asyncIterator = $$asyncIterator
+/*:: declare export var $$asyncIterator: '@@asyncIterator'; */
+export var $$asyncIterator = SYMBOL_ASYNC_ITERATOR || '@@asyncIterator'
 
 /**
  * Returns true if the provided object implements the AsyncIterator protocol via
@@ -458,10 +479,10 @@ exports.$$asyncIterator = $$asyncIterator
  *   A value which might implement the AsyncIterable protocol.
  * @return {boolean} true if AsyncIterable.
  */
-function isAsyncIterable(obj) {
+/*:: declare export function isAsyncIterable(obj: any): boolean; */
+export function isAsyncIterable(obj) {
   return !!getAsyncIteratorMethod(obj)
 }
-exports.isAsyncIterable = isAsyncIterable
 
 /**
  * If the provided object implements the AsyncIterator protocol, its
@@ -481,13 +502,15 @@ exports.isAsyncIterable = isAsyncIterable
  *   An AsyncIterable object which is the source of an AsyncIterator.
  * @return {AsyncIterator<T>} new AsyncIterator instance.
  */
-function getAsyncIterator(asyncIterable) {
+/*:: declare export var getAsyncIterator:
+  & (<+TValue>(asyncIterable: AsyncIterable<TValue>) => AsyncIterator<TValue>)
+  & ((asyncIterable: mixed) => (void | AsyncIterator<mixed>)); */
+export function getAsyncIterator(asyncIterable) {
   var method = getAsyncIteratorMethod(asyncIterable)
   if (method) {
     return method.call(asyncIterable)
   }
 }
-exports.getAsyncIterator = getAsyncIterator
 
 /**
  * If the provided object implements the AsyncIterator protocol, the method
@@ -509,7 +532,10 @@ exports.getAsyncIterator = getAsyncIterator
  *   An AsyncIterable object which defines an `@@asyncIterator` method.
  * @return {function(): AsyncIterator<T>} `@@asyncIterator` method.
  */
-function getAsyncIteratorMethod(asyncIterable) {
+/*:: declare export var getAsyncIteratorMethod:
+  & (<+TValue>(asyncIterable: AsyncIterable<TValue>) => (() => AsyncIterator<TValue>))
+  & ((asyncIterable: mixed) => (void | (() => AsyncIterator<mixed>))); */
+export function getAsyncIteratorMethod(asyncIterable) {
   if (asyncIterable != null) {
     var method =
       (SYMBOL_ASYNC_ITERATOR && asyncIterable[SYMBOL_ASYNC_ITERATOR]) ||
@@ -519,7 +545,6 @@ function getAsyncIteratorMethod(asyncIterable) {
     }
   }
 }
-exports.getAsyncIteratorMethod = getAsyncIteratorMethod
 
 /**
  * Similar to {@link getAsyncIterator}, this method returns a new AsyncIterator
@@ -554,7 +579,13 @@ exports.getAsyncIteratorMethod = getAsyncIteratorMethod
  *   An AsyncIterable, Iterable, or Array-like object to produce an Iterator.
  * @return {AsyncIterator<T>} new AsyncIterator instance.
  */
-function createAsyncIterator(source) {
+/*:: declare export var createAsyncIterator:
+  & (<+TValue>(
+      collection: Iterable<Promise<TValue> | TValue> | AsyncIterable<TValue>
+    ) => AsyncIterator<TValue>)
+  & ((collection: {length: number}) => AsyncIterator<mixed>)
+  & ((collection: mixed) => (void | AsyncIterator<mixed>)); */
+export function createAsyncIterator(source) {
   if (source != null) {
     var asyncIterator = getAsyncIterator(source)
     if (asyncIterator) {
@@ -566,7 +597,6 @@ function createAsyncIterator(source) {
     }
   }
 }
-exports.createAsyncIterator = createAsyncIterator
 
 // When the object provided to `createAsyncIterator` is not AsyncIterable but is
 // sync Iterable, this simple wrapper is created.
@@ -632,7 +662,18 @@ AsyncFromSyncIterator.prototype.next = function() {
  * @param [thisArg]
  *   Optional. Value to use as `this` when executing `callback`.
  */
-function forAwaitEach(source, callback, thisArg) {
+/*:: declare export var forAwaitEach:
+  & (<+TValue, TCollection: Iterable<Promise<TValue> | TValue> | AsyncIterable<TValue>>(
+      collection: TCollection,
+      callbackFn: (value: TValue, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => Promise<void>)
+  & (<TCollection: { length: number }>(
+      collection: TCollection,
+      callbackFn: (value: mixed, index: number, collection: TCollection) => any,
+      thisArg?: any
+    ) => Promise<void>); */
+export function forAwaitEach(source, callback, thisArg) {
   var asyncIterator = createAsyncIterator(source)
   if (asyncIterator) {
     var i = 0
@@ -659,4 +700,3 @@ function forAwaitEach(source, callback, thisArg) {
     })
   }
 }
-exports.forAwaitEach = forAwaitEach
