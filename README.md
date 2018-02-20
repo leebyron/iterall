@@ -81,7 +81,7 @@ Not only were Iterables defined in ES2015, they were also implemented by the
 built-in data-structures including [Array][array#@@iterator]. Older JavaScript
 environments do not implement `Array.prototype[@@iterator]()`, however this is
 only a minor problem. JavaScript has another related and much older protocol:
-[Array-like]. An value is "Array-like" if it has a numeric `length` property and
+[Array-like]. A value is "Array-like" if it has a numeric `length` property and
 indexed access, but does not necessarily have methods like `.push()` or `.forEach()`.
 Much like [`Array.from`][array.from], `iterall`'s `forEach()` and
 `createIterator()` methods also accept collections which are not Iterable but
