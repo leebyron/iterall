@@ -6,3 +6,4 @@
 /node_modules
 npm-debug.log
 /index.js
+/index.js.flow
