@@ -17,7 +17,7 @@
     "docs": "documentation readme index.mjs --parse-extension mjs -s API",
     "travis": "npm run lint-check && npm run build && npm run flow && npm run testdocs && npm run testonly && nyc report --reporter=text-lcov | coveralls",
     "preversion": "npm run test",
-    "prerelease": "npm run test"
+    "prepublishOnly": "npm run test"
   },
   "repository": {
     "type": "git",
