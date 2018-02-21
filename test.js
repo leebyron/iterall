@@ -663,6 +663,22 @@ test('forEach iterates over Array-like with early break', () => {
   ])
 })
 
+function* infiniteIterator() {
+  while (true) {
+    yield true
+  }
+}
+
+test('forEach throws when iterating over infinite iterator', () => {
+  var caughtError
+  try {
+    forEach(infiniteIterator(), () => {})
+  } catch (e) {
+    caughtError = e
+  }
+  assert.equal(caughtError && caughtError.message, 'Near-infinite iteration.')
+})
+
 // createIterator
 
 var createIterator = require('./').createIterator
