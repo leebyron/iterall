@@ -1,0 +1,11 @@
+{
+  "plugins": [
+    "remove-comments",
+    [
+      "transform-es2015-modules-commonjs",
+      {
+        "strict": true
+      }
+    ]
+  ]
+}
