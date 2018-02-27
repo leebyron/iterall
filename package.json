@@ -54,16 +54,5 @@
     "nyc": "11.4.1",
     "prettier": "1.10.2",
     "regression": "2.0.1"
-  },
-  "babel": {
-    "plugins": [
-      "remove-comments",
-      [
-        "transform-es2015-modules-commonjs",
-        {
-          "strict": true
-        }
-      ]
-    ]
   }
 }
