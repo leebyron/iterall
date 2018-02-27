@@ -2,34 +2,11 @@
   "name": "iterall",
   "version": "1.2.1",
   "description": "Minimal zero-dependency utilities for using JavaScript Iterables in all environments.",
-  "main": "index",
-  "module": "index.mjs",
-  "typings": "index.d.ts",
-  "scripts": {
-    "test": "npm run lint && npm run build && npm run flow && npm run testonly && npm run testdocs",
-    "flow": "flow check --include-warnings",
-    "lint": "npm run prettier -- --write",
-    "lint-check": "npm run prettier -- --list-different",
-    "prettier": "prettier --single-quote --no-semi '*.{js,mjs}'",
-    "build": "babel index.mjs > index.js && cp index.mjs index.js.flow",
-    "testonly": "nyc --check-coverage --statements 100 node test.js",
-    "testdocs": "if [ \"$(documentation readme index.mjs --parse-extension mjs -ds API | grep -vF 'up to date')\" ]; then echo 'Must run: npm run docs'; exit 1; fi;",
-    "docs": "documentation readme index.mjs --parse-extension mjs -s API",
-    "travis": "npm run lint-check && npm run build && npm run flow && npm run testdocs && npm run testonly && nyc report --reporter=text-lcov | coveralls",
-    "preversion": "npm run test",
-    "prepublishOnly": "npm run test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/leebyron/iterall.git"
-  },
-  "files": [
-    "index.js",
-    "index.mjs",
-    "index.js.flow",
-    "index.d.ts",
-    "LICENSE"
-  ],
+  "license": "MIT",
+  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
+  "homepage": "https://github.com/leebyron/iterall",
+  "bugs": "https://github.com/leebyron/iterall/issues",
+  "repository": "github:leebyron/iterall",
   "keywords": [
     "es6",
     "iterator",
@@ -37,12 +14,25 @@
     "polyfill",
     "for-of"
   ],
-  "author": "Lee Byron <lee@leebyron.com> (http://leebyron.com/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/leebyron/iterall/issues"
+  "main": "dist/index",
+  "module": "dist/index.esm.mjs",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "npm run lint && npm run build && npm run flow && npm run testonly && npm run docs",
+    "test-ci": "npm run lint-check && npm run build && npm run flow && npm run testonly && npm run docs-check",
+    "flow": "flow check --include-warnings",
+    "lint": "npm run prettier -- --write",
+    "lint-check": "npm run prettier -- --list-different",
+    "prettier": "prettier --single-quote --no-semi '*.{js,mjs}'",
+    "testonly": "nyc --check-coverage --statements 100 node test.js",
+    "docs": "documentation readme index.mjs --parse-extension mjs -s API",
+    "docs-check": "if [ \"$(documentation readme index.mjs --parse-extension mjs -ds API | grep -vF 'up to date')\" ]; then echo 'Must run: npm run docs'; exit 1; fi;",
+    "build": ". ./build.sh",
+    "travis": "npm run test-ci && nyc report --reporter=text-lcov | coveralls",
+    "preversion": "npm run test-ci",
+    "postversion": "npm run build",
+    "prepublishOnly": "npm run test-ci && (cd dist && npm publish) && exit 3"
   },
-  "homepage": "https://github.com/leebyron/iterall#readme",
   "devDependencies": {
     "babel-cli": "6.26.0",
     "babel-core": "6.26.0",
