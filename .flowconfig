@@ -1,5 +1,9 @@
 [options]
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectError
-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)?)\\)?:? #[0-9]+
 module.file_ext=.js
 module.file_ext=.mjs
+
+[version]
+^0.68.0

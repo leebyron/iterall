@@ -808,6 +808,7 @@ var $$asyncIterator = require('./').$$asyncIterator
 test('$$asyncIterator is always available', () => $$asyncIterator != null)
 
 test('$$asyncIterator is Symbol.asyncIterator when available', () =>
+  // $FlowIssue(>=0.68.0) #27054000
   Symbol.asyncIterator && $$asyncIterator === Symbol.asyncIterator)
 
 // Flow has trouble tracking Symbol values and computed properties.
