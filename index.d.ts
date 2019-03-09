@@ -10,7 +10,7 @@
 // Iterable, Iterator, AsyncIterable, and AsyncIterator so they are not
 // defined here. However you may need to configure TypeScript to include them.
 
-export var $$iterator: symbol
+export const $$iterator: unique symbol
 
 export function isIterable(obj: any): obj is Iterable<any>
 
@@ -45,7 +45,7 @@ export function forEach<TCollection extends { length: number }>(
   thisArg?: any
 ): void
 
-export var $$asyncIterator: symbol
+export const $$asyncIterator: unique symbol
 
 export function isAsyncIterable(obj: any): obj is AsyncIterable<any>
 
