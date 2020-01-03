@@ -240,8 +240,8 @@ automatically update README.md
 
 #### Table of Contents
 
--   [Iterable](#iterable)
 -   [Iterator](#iterator)
+-   [Iterable](#iterable)
 -   [$$iterator](#iterator-1)
 -   [isIterable](#isiterable)
 -   [isArrayLike](#isarraylike)
@@ -259,6 +259,17 @@ automatically update README.md
 -   [createAsyncIterator](#createasynciterator)
 -   [forAwaitEach](#forawaiteach)
 
+### Iterator
+
+-   **See: [MDN Iteration protocols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)**
+
+[Iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)
+is a _protocol_ which describes a standard way to produce a sequence of
+values, typically the values of the Iterable represented by this Iterator.
+
+While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterator-interface)
+it can be utilized by any version of JavaScript.
+
 ### Iterable
 
 -   **See: [MDN Iteration protocols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterable)**
@@ -271,17 +282,6 @@ loop or `iterall`'s `forEach` function. Many [built-in types](https://developer.
 implement the Iterable protocol, including `Array` and `Map`.
 
 While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterable-interface)
-it can be utilized by any version of JavaScript.
-
-### Iterator
-
--   **See: [MDN Iteration protocols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)**
-
-[Iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#iterator)
-is a _protocol_ which describes a standard way to produce a sequence of
-values, typically the values of the Iterable represented by this Iterator.
-
-While described by the [ES2015 version of JavaScript](http://www.ecma-international.org/ecma-262/6.0/#sec-iterator-interface)
 it can be utilized by any version of JavaScript.
 
 ### $$iterator
