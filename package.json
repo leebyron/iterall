@@ -39,7 +39,7 @@
     "babel-plugin-remove-comments": "2.0.0",
     "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
     "coveralls": "3.0.0",
-    "documentation": "5.4.0",
+    "documentation": "^12.1.4",
     "flow-bin": "0.68.0",
     "nyc": "11.4.1",
     "prettier": "1.10.2",
