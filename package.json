@@ -42,7 +42,7 @@
     "documentation": "^12.1.4",
     "flow-bin": "^0.114.0",
     "nyc": "11.4.1",
-    "prettier": "1.10.2",
+    "prettier": "^1.19.1",
     "regression": "2.0.1"
   },
   "babel": {
