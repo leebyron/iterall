@@ -87,7 +87,7 @@ export function forAwaitEach<TCollection extends AsyncIterable<any>>(
   callbackFn: (value: ResolvedOf<TCollection>, index: number, collection: TCollection) => any,
   thisArg?: any
 ): Promise<void>
-export function forAwaitEach<TCollection extends Iterable<any>(
+export function forAwaitEach<TCollection extends Iterable<any>>(
   collection: TCollection,
   callbackFn: (value: ResolvedOf<TCollection>, index: number, collection: TCollection) => any,
   thisArg?: any
