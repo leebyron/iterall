@@ -1055,6 +1055,29 @@ test('createAsyncIterator creates Iterator for Array', () => {
   ])
 })
 
+test('createAsyncIterator creates Iterator for Generator', () => {
+  var iterator = createAsyncIterator(genSampleFib())
+  assert(iterator)
+  return Promise.all([
+    iterator
+      .next()
+      .then(step => assert.deepEqual(step, { value: 1, done: false })),
+    iterator
+      .next()
+      .then(step => assert.deepEqual(step, { value: 1, done: false })),
+    iterator
+      .next()
+      .then(step => assert.deepEqual(step, { value: 2, done: false })),
+    iterator
+      // $FlowFixMe
+      .return(10)
+      .then(step => assert.deepEqual(step, { value: 10, done: true })),
+    iterator
+      .next()
+      .then(step => assert.deepEqual(step, { value: undefined, done: true }))
+  ])
+})
+
 test('createAsyncIterator creates Iterator for Iterator', () => {
   var myIterator = getIterator(['Alpha', 'Bravo', 'Charlie'])
   var iterator = createAsyncIterator(myIterator)
@@ -1118,6 +1141,69 @@ test('createAsyncIterator creates Iterator for Array-like', () => {
     iterator
       .next()
       .then(step => assert.deepEqual(step, { value: undefined, done: true }))
+  ])
+})
+
+test('createAsyncIterator forwards return if possible', () => {
+  var iteratorA = createAsyncIterator(genSampleFib())
+  var iteratorB = createAsyncIterator(arrayLike())
+  return Promise.all([
+    iteratorA
+      .next()
+      .then(step => assert.deepEqual(step, { value: 1, done: false })),
+    iteratorA
+      // $FlowFixMe
+      .return(10)
+      .then(step => assert.deepEqual(step, { value: 10, done: true })),
+    iteratorA
+      .next()
+      .then(step => assert.deepEqual(step, { value: undefined, done: true })),
+    iteratorB
+      .next()
+      .then(step => assert.deepEqual(step, { value: 'Alpha', done: false })),
+    iteratorB
+      // $FlowFixMe
+      .return(10)
+      .then(step => assert.deepEqual(step, { value: 10, done: true })),
+    iteratorB
+      .next()
+      .then(step => assert.deepEqual(step, { value: 'Bravo', done: false }))
+  ])
+})
+
+test('createAsyncIterator forwards throw if possible', () => {
+  var iteratorA = createAsyncIterator(genSampleFib())
+  var iteratorB = createAsyncIterator(arrayLike())
+  var thrownError = new Error()
+  return Promise.all([
+    iteratorA
+      .next()
+      .then(step => assert.deepEqual(step, { value: 1, done: false })),
+    iteratorA
+      // $FlowFixMe
+      .throw(thrownError)
+      .then(
+        // $FlowFixMe
+        unexpected => assert.fail(`Unexpected: ${unexpected}`),
+        err => assert.equal(err, thrownError)
+      ),
+    iteratorA
+      .next()
+      .then(step => assert.deepEqual(step, { value: undefined, done: true })),
+    iteratorB
+      .next()
+      .then(step => assert.deepEqual(step, { value: 'Alpha', done: false })),
+    iteratorB
+      // $FlowFixMe
+      .throw(thrownError)
+      .then(
+        // $FlowFixMe
+        unexpected => assert.fail(`Unexpected: ${unexpected}`),
+        err => assert.equal(err, thrownError)
+      ),
+    iteratorB
+      .next()
+      .then(step => assert.deepEqual(step, { value: 'Bravo', done: false }))
   ])
 })
 
