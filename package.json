@@ -41,7 +41,7 @@
     "coveralls": "^3.0.9",
     "documentation": "^12.1.4",
     "flow-bin": "^0.114.0",
-    "nyc": "11.4.1",
+    "nyc": "15.1.0",
     "prettier": "^1.19.1",
     "regression": "2.0.1"
   },
